@@ -17,6 +17,7 @@ backend-init:
 		laravelsail/php83-composer:latest \
 		composer install --ignore-platform-reqs
 	./vendor/bin/sail build
+	./vendor/bin/sail up -d
 	./vendor/bin/sail artisan key:generate
 
 backend-run: | backend-init
