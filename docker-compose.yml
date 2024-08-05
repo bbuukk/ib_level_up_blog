@@ -88,3 +88,7 @@ networks:
                 # The reason for this error is that docker will try to use VPN range by default, and conflict with openfortivpn.
                 # - see https://docs.storagemadeeasy.com/appliance/docker_networking
                 - subnet: 172.137.0.0/16
+frontend:
+    build: ./frontend/Dockerfile
+    ports:
+      - '3000:3000'
