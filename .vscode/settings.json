@@ -1,0 +1,7 @@
+{
+    "editor.formatOnSave": true,
+    "eslint.workingDirectories": [
+        { "directory": "./frontend", "changeProcessCWD": true }
+    ],
+    "prettier.requireConfig": true
+}
