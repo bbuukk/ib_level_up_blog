@@ -4,6 +4,8 @@
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "stivo.tailwind-fold",
-    "vitest.explorer"
+    "vitest.explorer",
+    "yoavbls.pretty-ts-errors",
+    "rangav.vscode-thunder-client"
   ]
 }
