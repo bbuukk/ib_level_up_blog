@@ -8,22 +8,20 @@ Here is some useful info to get you started.
 
 ---
 
-### Easy way to run the whole project
+## Easy way to run the whole project
 
 ```bash
-make backend-run
+make run
 ```
 
 ## Verify that backend is running
 
+After running the project, issue the following command:
+
 ```bash
-curl -H 'Accept: application/json' localhost/api/version
+curl -H 'Accept: application/json' localhost:8000/api/version
 ```
 
----
+## Verify that frontend is running
 
-### URLs (when the docker-compose project is running)
-
-Frontend app: [http://localhost:8080](http://localhost:8080)
-
-Backend API: [http://localhost:8000/api](http://localhost:8000/api)
+After running the project, visit [http://localhost](http://localhost) in a browser of your choice.
