@@ -14,7 +14,7 @@ COPY . .
 RUN pnpm install
 
 # Expose the port on which the server is running
-EXPOSE 3000
+EXPOSE 5173
 
-# Start the server
-CMD ["pnpm", "run", "dev"]
+# Start the dev server
+CMD ["pnpm", "run", "dev-container"]

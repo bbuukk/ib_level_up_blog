@@ -8,7 +8,7 @@
 # IMPORTANT: the format uses TABS "\t" to indent commands
 #
 
-backend-init:
+init:
 	- cp -n .env.example .env
 	docker run --rm \
 		-u "$$(id -u):$$(id -g)" \
@@ -20,14 +20,11 @@ backend-init:
 	./vendor/bin/sail up -d
 	./vendor/bin/sail artisan key:generate
 
-backend-run: | backend-init
+run: | init
 	./vendor/bin/sail up -d
 
 migrate:
 	./vendor/bin/sail artisan migrate
-
-backend-up:
-	./vendor/bin/sail up -d
 
 migrate-fresh:
 	./vendor/bin/sail artisan migrate:fresh
@@ -35,6 +32,6 @@ migrate-fresh:
 migrate-seed:
 	./vendor/bin/sail artisan migrate:fresh --seed
 
-test:
+backend-test:
 	./vendor/bin/sail artisan test
 
