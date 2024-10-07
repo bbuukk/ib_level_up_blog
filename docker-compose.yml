@@ -1,4 +1,8 @@
 services:
+    sail-checker:
+        image: alpine
+        command: sh -c '[ ! -z "${WWWUSER}" ] || (echo README && echo "Please use sail command to build and run this project instead of docker compose" && echo README && exit 1)'
+
     backend:
         build:
             context: ./vendor/laravel/sail/runtimes/8.3
@@ -21,9 +25,14 @@ services:
         networks:
             - sail
         depends_on:
-            - pgsql
-            - redis
-            - mailpit
+            sail-checker:
+                condition: service_completed_successfully
+            pgsql:
+                condition: service_started
+            redis:
+                condition: service_started
+            mailpit:
+                condition: service_started
 
     frontend:
         build:
@@ -39,7 +48,10 @@ services:
         networks:
             - sail
         depends_on:
-            - backend
+            sail-checker:
+                condition: service_completed_successfully
+            backend:
+                condition: service_started
 
     pgsql:
         image: 'postgres:15'
@@ -66,6 +78,9 @@ services:
                 - '${DB_USERNAME}'
             retries: 3
             timeout: 5s
+        depends_on:
+            sail-checker:
+                condition: service_completed_successfully
 
     redis:
         image: 'redis:alpine'
@@ -82,6 +97,9 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+        depends_on:
+            sail-checker:
+                condition: service_completed_successfully
 
     mailpit:
         image: 'axllent/mailpit:latest'
@@ -90,6 +108,9 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+        depends_on:
+            sail-checker:
+                condition: service_completed_successfully
 
 volumes:
     sail-pgsql:
