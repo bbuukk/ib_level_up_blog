@@ -20,6 +20,11 @@ init:
 	./vendor/bin/sail up -d
 	./vendor/bin/sail artisan key:generate
 
+rebuild-frontend:
+	./vendor/bin/sail down
+	./vendor/bin/sail build frontend
+	./vendor/bin/sail up -d frontend
+
 run: | init
 	./vendor/bin/sail up -d
 
