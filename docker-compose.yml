@@ -38,7 +38,7 @@ services:
 
     frontend:
         build:
-            context: frontend
+            context: ./frontend
             dockerfile: Dockerfile
         extra_hosts:
             - 'host.docker.internal:host-gateway'
