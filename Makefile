@@ -35,3 +35,5 @@ migrate-seed:
 backend-test:
 	./vendor/bin/sail artisan test
 
+tinker:
+	./vendor/bin/sail artisan tinker
