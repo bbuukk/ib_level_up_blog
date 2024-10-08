@@ -2,6 +2,8 @@ services:
     sail-checker:
         image: alpine
         command: sh -c '[ ! -z "${WWWUSER}" ] || (echo README && echo "Please use sail command to build and run this project instead of docker compose" && echo README && exit 1)'
+        networks:
+            - sail
 
     backend:
         build:
