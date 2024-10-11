@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreArticleRequest;
+use App\Http\Requests\StoreCommentRequest;
 use App\Models\Article;
 use App\Models\Services\ArticleService;
 use Illuminate\Support\Collection;
@@ -89,6 +90,19 @@ class ArticleController
         // view layer - render response
         // return $this->generateCsv()
         // return $this->sendEmailToAuthor()
+        return response(status: 201);
+    }
+
+    public function addComment(int $articleId, StoreCommentRequest $request)
+    {
+        $content = $request->validated('content');
+
+        $article = $this->articleService->findArticleById($articleId);
+        if (is_null($article)) {
+            abort(404, 'Article not found');
+        }
+        $this->articleService->addComment($article, $content);
+
         return response(status: 201);
     }
 }

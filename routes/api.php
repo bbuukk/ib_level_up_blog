@@ -35,4 +35,5 @@ Route::get('/users/{userId}', function (int $userId) {
 Route::get('/articles', [ArticleController::class, 'index']);
 Route::get('/articles/{articleId}', [ArticleController::class, 'show']);
 Route::get('/articles/{articleId}/comments', [ArticleController::class, 'comments']);
+Route::post('/articles/{articleId}/comments', [ArticleController::class, 'addComment']);
 Route::post('/articles', [ArticleController::class, 'store']);

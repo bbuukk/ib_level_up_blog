@@ -3,6 +3,7 @@
 namespace App\Models\Services;
 
 use App\Models\Article;
+use App\Models\Comment;
 
 class ArticleService
 {
@@ -27,7 +28,7 @@ class ArticleService
     {
         return Article::query()
             ->where('id', $articleId)
-            ->first($articleId);
+            ->first();
     }
 
     public function getCommentsForArticle(Article $article)
@@ -35,5 +36,13 @@ class ArticleService
         return $article
             ->comments()
             ->get();
+    }
+
+    public function addComment(Article $article, string $commentContent)
+    {
+        $comment = new Comment;
+        $comment->content = $commentContent;
+
+        $article->comments()->save($comment);
     }
 }
