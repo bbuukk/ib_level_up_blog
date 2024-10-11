@@ -27,14 +27,15 @@ class ArticleController
         // model layer - fetch all articles from the DB
         $articles = $this->articleService->listAllArticles();
 
-        // view layer (output) - transform the response in some way
+        // view layer (output) - transform the response in some way (there is a better way to do this with Laravel)
         $response = [];
         foreach ($articles as $article) {
             array_push($response, [
+                'id' => $article->id,
                 'content' => $article->content,
                 'title' => $article->title,
-                'created' => $article->created_at,
-                'update' => $article->updated_at,
+                'created_at' => $article->created_at,
+                'updated_at' => $article->updated_at,
             ]);
         }
 
