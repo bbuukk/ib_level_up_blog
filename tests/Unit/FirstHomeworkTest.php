@@ -22,7 +22,29 @@ class FirstHomeworkTest extends TestCase
         int $length = 0,
         string $replacement = '...'
     ) {
-        throw new Exception('Not implemented');
+
+        $encoding = 'UTF-8';
+
+        $index = mb_strpos($haystack, $needle, 0, $encoding);
+        if ($index === false) {
+            return '';
+        }
+
+        $haystackLen = mb_strlen($haystack, 'UTF-8');
+        $needleLen = mb_strlen($needle, 'UTF-8');
+
+        $start = $index < $length ? 0 : $index - $length;
+        $end = $index + $needleLen + $length;
+        $len = $end - $start;
+
+        $haystackSubstr = mb_substr($haystack, $start, $len, $encoding);
+
+        var_dump($start, $end, $haystackSubstr);
+
+        $prepend = $start > 0 ? $replacement : '';
+        $append = $end < $haystackLen ? $replacement : '';
+
+        return $prepend . $haystackSubstr . $append;
     }
 
     public function test_previewer(): void
