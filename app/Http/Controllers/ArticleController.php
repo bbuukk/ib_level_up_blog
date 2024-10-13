@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateArticleRequest;
+
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Article;
@@ -105,5 +107,33 @@ class ArticleController
         $this->articleService->addComment($article, $content);
 
         return response(status: 201);
+    }
+
+    public function update(int $articleId, UpdateArticleRequest $request)
+    {
+        $newArticle = $request->validated();
+
+        $article = $this->articleService->findArticleById($articleId);
+        if (is_null($article)) {
+            abort(404, 'article not found');
+        }
+
+        $article->update($newArticle);
+
+        return response()->json($article, '200');
+    }
+
+    public function destroy(int $articleId)
+    {
+        $article = $this->articleService->findArticleById($articleId);
+        if (is_null($article)) {
+            abort(404, 'article not found');
+        }
+
+
+        $article->comments()->delete();
+        $article->delete();
+
+        return response()->json($article, '204');
     }
 }

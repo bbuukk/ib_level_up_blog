@@ -32,8 +32,15 @@ Route::get('/users/{userId}', function (int $userId) {
 /**
  * Articles
  */
-Route::get('/articles', [ArticleController::class, 'index']);
-Route::get('/articles/{articleId}', [ArticleController::class, 'show']);
-Route::get('/articles/{articleId}/comments', [ArticleController::class, 'comments']);
-Route::post('/articles/{articleId}/comments', [ArticleController::class, 'addComment']);
-Route::post('/articles', [ArticleController::class, 'store']);
+Route::group(["prefix" => "articles"], function () {
+
+    Route::get('/', [ArticleController::class, 'index']);
+    Route::get('/{articleId}', [ArticleController::class, 'show']);
+    Route::get('/{articleId}/comments', [ArticleController::class, 'comments']);
+
+    Route::post('/{articleId}/comments', [ArticleController::class, 'addComment']);
+    Route::post('/', [ArticleController::class, 'store']);
+
+    Route::put('/{articleId}', [ArticleController::class, 'update']);
+    Route::delete('/{articleId}', [ArticleController::class, 'destroy']);
+});

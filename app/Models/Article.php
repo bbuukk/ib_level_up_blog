@@ -14,6 +14,12 @@ class Article extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'content',
+        // Add other fields that you want to be fillable
+    ];
+
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
