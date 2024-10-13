@@ -1,0 +1,17 @@
+meta {
+  name: Article Comment
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8000/api/articles/1/comments
+  body: json
+  auth: none
+}
+
+body:json {
+  {    
+      "content": "this is test article content"
+  }
+}

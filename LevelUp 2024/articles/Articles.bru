@@ -1,0 +1,16 @@
+meta {
+  name: Articles
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8000/api/articles
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+  Content-Type: application/json
+}

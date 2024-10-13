@@ -1,0 +1,18 @@
+meta {
+  name: Update article
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:8000/api/articles/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+  "title" :  "changed"
+  "content" : "changed"
+  }
+}

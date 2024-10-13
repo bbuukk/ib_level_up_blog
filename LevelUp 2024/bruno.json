@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "levelup_reqs",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
