@@ -131,7 +131,6 @@ class ArticleController
             abort(404, 'article not found');
         }
 
-
         $article->comments()->delete();
         $article->delete();
 

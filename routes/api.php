@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SampleController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -43,4 +44,10 @@ Route::group(["prefix" => "articles"], function () {
 
     Route::put('/{articleId}', [ArticleController::class, 'update']);
     Route::delete('/{articleId}', [ArticleController::class, 'destroy']);
+});
+
+Route::group(["prefix" => "comments"], function () {
+
+    Route::put('/{commentId}', [CommentController::class, 'update']);
+    Route::delete('/{commentId}', [CommentController::class, 'destroy']);
 });
