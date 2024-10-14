@@ -45,4 +45,11 @@ class ArticleService
 
         $article->comments()->save($comment);
     }
+
+    public function destroy(Article $article)
+    {
+
+        $article->comments()->delete();
+        $article->delete();
+    }
 }

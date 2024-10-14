@@ -14,12 +14,8 @@ use Illuminate\Support\Collection;
 
 class ArticleController
 {
-    private ArticleService $articleService;
 
-    public function __construct(ArticleService $service)
-    {
-        $this->articleService = $service;
-    }
+    public function __construct(private ArticleService $articleService) {}
 
     // list
     // showAllArticle
@@ -130,9 +126,7 @@ class ArticleController
         if (is_null($article)) {
             abort(404, 'article not found');
         }
-
-        $article->comments()->delete();
-        $article->delete();
+        $this->articleService->destroy($article);
 
         return response()->json($article, '204');
     }

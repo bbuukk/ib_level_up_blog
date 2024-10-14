@@ -11,12 +11,7 @@ use App\Http\Requests\UpdateCommentRequest;
 class CommentController
 {
 
-    private CommentService $commentService;
-
-    public function __construct(CommentService $service)
-    {
-        $this->commentService = $service;
-    }
+    public function __construct(private CommentService $commentService) {}
 
     public function update(int $commentId, Request $request)
     {
@@ -26,9 +21,7 @@ class CommentController
         if (is_null($comment)) {
             abort(404, 'Comment not found');
         }
-
-        $comment->content = $newContent;
-        $comment->save();
+        $this->commentService->update($comment, $newContent);
 
         return response()->json($comment, '200');
     }
