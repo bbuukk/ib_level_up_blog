@@ -7,9 +7,10 @@ use App\Http\Requests\UpdateArticleRequest;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Article;
-use App\Models\Services\ArticleService;
+
+use App\Services\ArticleService;
+
 use Illuminate\Support\Collection;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ArticleController
 {
