@@ -3,6 +3,7 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SampleController;
+use App\Http\Controllers\TagController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,16 +39,21 @@ Route::group(["prefix" => "articles"], function () {
     Route::get('/', [ArticleController::class, 'index']);
     Route::get('/{articleId}', [ArticleController::class, 'show']);
     Route::get('/{articleId}/comments', [ArticleController::class, 'comments']);
+    Route::get('/tags/{tag}', [ArticleController::class, 'getArticlesByTag']);
 
     Route::post('/{articleId}/comments', [ArticleController::class, 'addComment']);
     Route::post('/', [ArticleController::class, 'store']);
+    Route::post('/{article}/tags/{tag}', [ArticleController::class, 'linkTagWithArticle']);
 
     Route::put('/{articleId}', [ArticleController::class, 'update']);
+
     Route::delete('/{articleId}', [ArticleController::class, 'destroy']);
+    Route::delete('/{article}/tags/{tag}', [ArticleController::class, 'removeTagFromArticle']);
 });
 
 Route::group(["prefix" => "comments"], function () {
-
     Route::put('/{commentId}', [CommentController::class, 'update']);
     Route::delete('/{commentId}', [CommentController::class, 'destroy']);
 });
+
+Route::apiResource('tags', TagController::class);

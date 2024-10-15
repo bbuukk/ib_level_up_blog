@@ -6,16 +6,19 @@ use App\Http\Requests\UpdateArticleRequest;
 
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\StoreCommentRequest;
+
 use App\Models\Article;
+use App\Models\Tag;
 
 use App\Services\ArticleService;
+use App\Services\TagService;
 
 use Illuminate\Support\Collection;
 
 class ArticleController
 {
 
-    public function __construct(private ArticleService $articleService) {}
+    public function __construct(private ArticleService $articleService, private TagService $tagService) {}
 
     // list
     // showAllArticle
@@ -129,5 +132,26 @@ class ArticleController
         $this->articleService->destroy($article);
 
         return response()->json($article, '204');
+    }
+
+    public function getArticlesByTag(Tag $tag)
+    {
+        $articles = $tag->articles()->get();
+
+        return response()->json($articles, '200');
+    }
+
+    public function linkTagWithArticle(Article $article, Tag $tag)
+    {
+        $article->tags()->attach($tag);
+
+        return response(status: '201');
+    }
+
+    public function removeTagFromArticle(Article $article, Tag $tag)
+    {
+        $article->tags()->detach($tag);
+
+        return response(status: '204');
     }
 }
