@@ -1,0 +1,17 @@
+meta {
+  name: Tag
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8000/api/tags
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "label": "javascript"
+  }
+}
