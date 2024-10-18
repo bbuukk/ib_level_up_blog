@@ -17,12 +17,22 @@ init:
 		laravelsail/php83-composer:latest \
 		composer install --ignore-platform-reqs
 	./vendor/bin/sail build
+	docker run --rm \
+		-v "$$(pwd)/frontend/node_modules:/app/node_modules" \
+		-w /app \
+		levelup-2024-frontend-sail \
+		pnpm install
 	./vendor/bin/sail up -d
 	./vendor/bin/sail artisan key:generate
 
 rebuild-frontend:
 	./vendor/bin/sail down
 	./vendor/bin/sail build frontend
+	docker run --rm \
+		-v "$$(pwd)/frontend/node_modules:/app/node_modules" \
+		-w /app \
+		levelup-2024-frontend-sail \
+		pnpm install
 	./vendor/bin/sail up -d frontend
 
 run: | init
