@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Article;
 use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ArticleSeeder extends Seeder
@@ -13,11 +14,14 @@ class ArticleSeeder extends Seeder
      */
     public function run(): void
     {
-        Article::factory()
-            ->count(5)
+        User::factory()
             ->has(
-                Comment::factory(3)
+                Article::factory()
+                    ->count(5)
+                    ->has(
+                        Comment::factory(3)
+                    )
             )
-            ->create();
+            ->createOne();
     }
 }

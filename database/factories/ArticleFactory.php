@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,8 @@ class ArticleFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(6),
-            'content' => $this->faker->paragraph(5)
+            'content' => $this->faker->paragraph(5),
+            'author_id' => User::factory()
         ];
     }
 }

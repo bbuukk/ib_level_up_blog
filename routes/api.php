@@ -4,6 +4,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\SampleController;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
@@ -29,6 +30,22 @@ Route::get('/users/{userId}', function (int $userId) {
     return User::query()->findOrFail($userId);
 });
 
+Route::post('/login', function (Request $request) {
+    $email = $request->get('email');
+    $password = $request->get('password');
+
+    $user = User::query()->where('email', $email)->first();
+
+    if (!Hash::check($password, $user->password)) {
+        throw new Exception('invalid password');
+    }
+
+    return [
+        'type' => 'Bearer',
+        'token' => encrypt(base64_encode($email . ':' . $password))
+    ];
+});
+
 /**
  * Articles
  */
@@ -36,4 +53,9 @@ Route::get('/articles', [ArticleController::class, 'index']);
 Route::get('/articles/{articleId}', [ArticleController::class, 'show']);
 Route::get('/articles/{articleId}/comments', [ArticleController::class, 'comments']);
 Route::post('/articles/{articleId}/comments', [ArticleController::class, 'addComment']);
-Route::post('/articles', [ArticleController::class, 'store']);
+
+/**
+ * IMPORTANT: add ->middleware(['auth:api']) to routes which are supposed to be authenticated
+ */
+Route::post('/articles', [ArticleController::class, 'store'])
+    ->middleware(['auth:api']);

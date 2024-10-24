@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\StoreCommentRequest;
-use App\Models\Article;
 use App\Models\Services\ArticleService;
 use Illuminate\Support\Collection;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController
 {
@@ -36,6 +35,10 @@ class ArticleController
                 'title' => $article->title,
                 'created_at' => $article->created_at,
                 'updated_at' => $article->updated_at,
+                'author' => [
+                    'id' => $article->author()->first()->id,
+                    'name' => $article->author()->first()->name,
+                ]
             ]);
         }
 
@@ -84,9 +87,12 @@ class ArticleController
         // view layer - validate the request
         $title = $request->validated('title');
         $content = $request->validated('content');
+        $author = Auth::user();
+
+        //$author = $this->getIdentityFromAuthorizationHeader($request);
 
         // model layer - do the thing with the data (store)
-        $this->articleService->store($title, $content);
+        $this->articleService->store($title, $content, $author);
 
         // view layer - render response
         // return $this->generateCsv()
