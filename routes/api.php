@@ -34,6 +34,10 @@ Route::get('/users/{userId}', function (int $userId) {
     return User::query()->findOrFail($userId);
 });
 
+Route::get('/me', function () {
+    return auth()->user();
+});
+
 Route::post('/login', function (Request $request) {
     $email = $request->get('email');
     $password = $request->get('password');
