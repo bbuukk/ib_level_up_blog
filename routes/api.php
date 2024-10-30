@@ -36,7 +36,7 @@ Route::get('/users/{userId}', function (int $userId) {
 
 Route::get('/me', function () {
     return auth()->user();
-});
+})->middleware(['auth:api']);
 
 Route::post('/login', function (Request $request) {
     $email = $request->get('email');
