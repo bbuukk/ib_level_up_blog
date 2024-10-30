@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            // Note: this will disable CSRF and other protections
+            // On a real SPA API you would have this enabled, see the documentation for more info:
+            // * https://laravel.com/docs/11.x/csrf
+            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
         //
