@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import BasicReactQuery from 'routes/BasicReactQuery';
 import Root from 'routes/Root';
 import Layout from './Layout';
+import { MantineProvider } from '@mantine/core';
 
 const router = createBrowserRouter([
   {
@@ -28,10 +29,12 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+      <MantineProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </MantineProvider>
     </StrictMode>
   );
 }

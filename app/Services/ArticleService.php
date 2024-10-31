@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Article;
 use App\Models\Comment;
+use App\Models\User;
 
 class ArticleService
 {
@@ -15,11 +16,13 @@ class ArticleService
     public function store(
         string $title,
         string $content,
+        User $author
     ): bool {
         $article = new Article;
 
         $article->title = $title;
         $article->content = $content;
+        $article->author()->associate($author);
 
         return $article->save();
     }
@@ -27,6 +30,7 @@ class ArticleService
     public function findArticleById(int $articleId): ?Article
     {
         return Article::query()
+            ->with('author')
             ->where('id', $articleId)
             ->first();
     }
