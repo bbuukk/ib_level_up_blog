@@ -20,7 +20,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::get('/version', [SampleController::class, 'version']);
 Route::post('/echo', [SampleController::class, 'echo']);
 
-
 /**
  * Users
  */
@@ -59,13 +58,16 @@ Route::group(["prefix" => "articles"], function () {
     Route::get('/tags/{tag}', [ArticleController::class, 'getArticlesByTag']);
 
     Route::post('/{articleId}/comments', [ArticleController::class, 'addComment']);
-    Route::post('/', [ArticleController::class, 'store']);
-    Route::post('/{article}/tags/{tag}', [ArticleController::class, 'linkTagWithArticle']);
 
-    Route::put('/{articleId}', [ArticleController::class, 'update']);
+    Route::group(['middleware' => ['auth:api']], function () {
+        Route::post('/', [ArticleController::class, 'store']);
+        Route::post('/{article}/tags/{tag}', [ArticleController::class, 'linkTagWithArticle']);
 
-    Route::delete('/{articleId}', [ArticleController::class, 'destroy']);
-    Route::delete('/{article}/tags/{tag}', [ArticleController::class, 'removeTagFromArticle']);
+        Route::put('/{articleId}', [ArticleController::class, 'update']);
+
+        Route::delete('/{articleId}', [ArticleController::class, 'destroy']);
+        Route::delete('/{article}/tags/{tag}', [ArticleController::class, 'removeTagFromArticle']);
+    });
 });
 
 Route::group(["prefix" => "comments"], function () {

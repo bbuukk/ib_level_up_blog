@@ -119,11 +119,18 @@ class ArticleController
 
     public function update(int $articleId, UpdateArticleRequest $request)
     {
+
         $newArticle = $request->validated();
+
+        $user = Auth::user();
 
         $article = $this->articleService->findArticleById($articleId);
         if (is_null($article)) {
-            abort(404, 'article not found');
+            abort(404, 'Article not found');
+        }
+
+        if ($article->author_id !== $user->id) {
+            abort(403, 'Forbidden. Please authorize as the article author to make changes.');
         }
 
         $article->update($newArticle);
@@ -133,10 +140,20 @@ class ArticleController
 
     public function destroy(int $articleId)
     {
+
+        $user = Auth::user();
+
         $article = $this->articleService->findArticleById($articleId);
         if (is_null($article)) {
-            abort(404, 'article not found');
+            abort(404, 'Article not found');
         }
+
+
+        if ($article->author_id !== $user->id) {
+            abort(403, 'Forbidden. Please authorize as the article author to make changes.');
+        }
+
+
         $this->articleService->destroy($article);
 
         return response()->json($article, '204');
@@ -151,6 +168,12 @@ class ArticleController
 
     public function linkTagWithArticle(Article $article, Tag $tag)
     {
+        $user = Auth::user();
+
+        if ($article->author_id !== $user->id) {
+            abort(403, 'Forbidden. Please authorize as the article author to make changes.');
+        }
+
         $article->tags()->attach($tag);
 
         return response(status: '201');
@@ -158,6 +181,12 @@ class ArticleController
 
     public function removeTagFromArticle(Article $article, Tag $tag)
     {
+        $user = Auth::user();
+
+        if ($article->author_id !== $user->id) {
+            abort(403, 'Forbidden. Please authorize as the article author to make changes.');
+        }
+
         $article->tags()->detach($tag);
 
         return response(status: '204');
