@@ -6,6 +6,7 @@ import BasicReactQuery from 'routes/BasicReactQuery';
 import Root from 'routes/Root';
 import Layout from './Layout';
 import { MantineProvider } from '@mantine/core';
+import AuthProvider from 'features/authentication/contexts/AuthProvider';
 
 const router = createBrowserRouter([
   {
@@ -31,8 +32,10 @@ function App() {
     <StrictMode>
       <MantineProvider>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-          <ReactQueryDevtools initialIsOpen={false} />
+          <AuthProvider>
+            <RouterProvider router={router} />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </AuthProvider>
         </QueryClientProvider>
       </MantineProvider>
     </StrictMode>

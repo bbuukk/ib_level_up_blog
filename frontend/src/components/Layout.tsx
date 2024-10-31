@@ -1,6 +1,10 @@
+import { Button } from '@mantine/core';
+import { useAuth } from 'features/authentication/contexts/AuthProvider';
 import { Link, Outlet } from 'react-router-dom';
 
 const NavigationBar = () => {
+  const { login } = useAuth();
+
   return (
     <header className="header">
       <div className="container--header">
@@ -19,6 +23,20 @@ const NavigationBar = () => {
               <Link to="/basic-react-query" className="nav__link">
                 Basics RQ
               </Link>
+            </li>
+            <li>
+              <Button
+                variant="filled"
+                color="green"
+                onClick={() => {
+                  login({
+                    email: 'francisco@internetbrands.com',
+                    password: 'test1234'
+                  });
+                }}
+              >
+                Sign In
+              </Button>
             </li>
           </ul>
           <div className="nav__toggle nav__toggle--active">
