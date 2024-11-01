@@ -1,12 +1,20 @@
-import { useAuth } from 'features/authentication/contexts/AuthProvider';
+import {
+  IsAuthorizedRequestStatus,
+  useAuth
+} from 'features/authentication/contexts/AuthProvider';
 import './Root.scss';
 
 const Root = () => {
   const { isAuthorized } = useAuth();
+
   return (
     <>
       <main>
-        <article>{isAuthorized ? 'Authorized' : 'Not Authorized'}</article>
+        <article>
+          {isAuthorized === IsAuthorizedRequestStatus.AUTHORIZED
+            ? 'Authorized'
+            : 'Not Authorized'}
+        </article>
         <section className="hero">
           <article className="container--hero">
             <h1>

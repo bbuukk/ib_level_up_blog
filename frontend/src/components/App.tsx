@@ -7,19 +7,34 @@ import Root from 'routes/Root';
 import Layout from './Layout';
 import { MantineProvider } from '@mantine/core';
 import AuthProvider from 'features/authentication/contexts/AuthProvider';
+import ProtectedRoute from 'features/authentication/ProtectedRoute';
+import ErrorPage from 'routes/ErrorElement';
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
+    errorElement: <ErrorPage />,
     children: [
       {
-        path: '/',
-        element: <Root />,
-        errorElement: <div>Not found</div>
-      },
-      {
-        path: '/basic-react-query',
-        element: <BasicReactQuery />
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            path: '/',
+            element: <Root />
+          },
+          {
+            path: '/basic-react-query',
+            element: <BasicReactQuery />
+          },
+          {
+            path: '/profile',
+            element: (
+              <ProtectedRoute>
+                <h1 className="mt-16">Profile</h1>
+              </ProtectedRoute>
+            )
+          }
+        ]
       }
     ]
   }
@@ -30,7 +45,7 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <StrictMode>
-      <MantineProvider>
+      <MantineProvider forceColorScheme="dark">
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <RouterProvider router={router} />

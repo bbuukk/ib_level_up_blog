@@ -1,11 +1,18 @@
-import { createContext, useContext, useState } from 'react';
-import { login } from 'utils/axios';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { getMe, login } from 'utils/axios';
 import LoginForm from '../types/LoginForm';
+import ApiUser from 'types/ApiUser';
 
 interface AuthContextType {
-  isAuthorized: boolean;
-  login: (data: LoginForm) => void;
+  isAuthorized: IsAuthorizedRequestStatus;
+  login: (data: LoginForm) => Promise<void>;
   logout: () => void;
+}
+
+export enum IsAuthorizedRequestStatus {
+  UNKNOWN = 'unknown',
+  AUTHORIZED = 'true',
+  NOT_AUTHORIZED = 'false'
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,32 +22,64 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(
+    IsAuthorizedRequestStatus.UNKNOWN
+  );
+  const [user, setUser] = useState<ApiUser | null>(null);
 
-  const sendLoginRequest = (data: LoginForm) => {
-    const fetchLogin = async () => {
+  const fetchLogin = async (data: LoginForm) => {
+    try {
+      const response = await login(data);
+      console.log('awaited response received', response);
+
+      localStorage.setItem('token', response.token);
+      setIsAuthorized(IsAuthorizedRequestStatus.AUTHORIZED);
+    } catch (error) {
+      console.error('Error logging in', error);
+      setIsAuthorized(IsAuthorizedRequestStatus.NOT_AUTHORIZED);
+    }
+  };
+
+  // Fetch the user on mount, so we determine if the user is logged in
+  useEffect(() => {
+    const fetchMe = async () => {
       try {
-        const response = await login(data);
+        const data = await getMe();
 
-        localStorage.setItem('token', response.token);
-        setIsAuthorized(true);
+        setUser(data);
+        setIsAuthorized(IsAuthorizedRequestStatus.AUTHORIZED);
       } catch (error) {
-        console.error('Error logging in', error);
-        setIsAuthorized(false);
+        setUser(null);
+        setIsAuthorized(IsAuthorizedRequestStatus.NOT_AUTHORIZED);
       }
     };
 
-    fetchLogin();
-  };
+    fetchMe();
+  }, []);
 
   const logout = () => {
-    // logout logic
+    const sendLogoutRequest = async () => {
+      try {
+        // TODO - not implemented on the backend
+        /*         await axios({
+          method: 'POST',
+          url: '/api/logout'
+        }); */
+
+        setUser(null);
+        localStorage.removeItem('token');
+      } catch (error) {
+        console.error('Error logging out', error);
+      } finally {
+        setIsAuthorized(IsAuthorizedRequestStatus.NOT_AUTHORIZED);
+      }
+    };
+
+    sendLogoutRequest();
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthorized, login: sendLoginRequest, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthorized, login: fetchLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );

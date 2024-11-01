@@ -1,9 +1,15 @@
 import { Button } from '@mantine/core';
 import { useAuth } from 'features/authentication/contexts/AuthProvider';
 import { Link, Outlet } from 'react-router-dom';
+import { useDisclosure } from '@mantine/hooks';
+import LoginFormModal from 'features/authentication/LoginFormModal';
 
-const NavigationBar = () => {
-  const { login } = useAuth();
+interface NavigationBarProps {
+  openLoginModal: () => void;
+}
+
+const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
+  const { login, logout } = useAuth();
 
   return (
     <header className="header">
@@ -25,17 +31,13 @@ const NavigationBar = () => {
               </Link>
             </li>
             <li>
-              <Button
-                variant="filled"
-                color="green"
-                onClick={() => {
-                  login({
-                    email: 'francisco@internetbrands.com',
-                    password: 'test1234'
-                  });
-                }}
-              >
+              <Button variant="filled" color="green" onClick={openLoginModal}>
                 Sign In
+              </Button>
+            </li>
+            <li>
+              <Button variant="filled" color="red" onClick={logout}>
+                Log out
               </Button>
             </li>
           </ul>
@@ -62,10 +64,13 @@ const Container = ({ children }: { children: React.ReactNode }) => {
 };
 
 const Layout = () => {
+  const [opened, { close, open }] = useDisclosure();
+
   return (
     <div>
-      <NavigationBar />
+      <NavigationBar openLoginModal={open} />
       <Container>
+        <LoginFormModal isOpen={opened} closeModal={close} />
         <Outlet />
       </Container>
     </div>
