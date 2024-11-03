@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 
 /**
  * @property string $title
@@ -21,6 +23,17 @@ class Article extends Model
         'content',
         // Add other fields that you want to be fillable
     ];
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $record = $this->where('id', $value)->first();
+
+        if (!$record) {
+            throw new ModelNotFoundException("The requested article could not be found. It may have been removed or does not exist.", 404);
+        }
+
+        return $record;
+    }
 
     public function comments(): HasMany
     {

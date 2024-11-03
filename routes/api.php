@@ -44,7 +44,6 @@ Route::post('/login', function (Request $request) {
         throw new Exception('invalid password');
     }
 
-
     $token = $user->createToken('name-irrelevant');
 
     return [
@@ -64,26 +63,28 @@ Route::get('/me', function () {
 Route::group(["prefix" => "articles"], function () {
 
     Route::get('/', [ArticleController::class, 'index']);
-    Route::get('/{articleId}', [ArticleController::class, 'show']);
-    Route::get('/{articleId}/comments', [ArticleController::class, 'comments']);
+    Route::get('/{article}', [ArticleController::class, 'show']);
+    Route::get('/{article}/comments', [ArticleController::class, 'comments']);
+    Route::get('/{article}/tags', [ArticleController::class, 'getArticleTags']);
     Route::get('/tags/{tag}', [ArticleController::class, 'getArticlesByTag']);
 
-    Route::post('/{articleId}/comments', [ArticleController::class, 'addComment']);
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
+
         Route::post('/', [ArticleController::class, 'store']);
+        Route::post('/{article}/comments', [ArticleController::class, 'addComment']);
         Route::post('/{article}/tags/{tag}', [ArticleController::class, 'linkTagWithArticle']);
 
-        Route::put('/{articleId}', [ArticleController::class, 'update']);
+        Route::put('/{article}', [ArticleController::class, 'update']);
 
-        Route::delete('/{articleId}', [ArticleController::class, 'destroy']);
+        Route::delete('/{article}', [ArticleController::class, 'destroy']);
         Route::delete('/{article}/tags/{tag}', [ArticleController::class, 'removeTagFromArticle']);
     });
 });
 
-Route::group(["prefix" => "comments"], function () {
-    Route::put('/{commentId}', [CommentController::class, 'update']);
-    Route::delete('/{commentId}', [CommentController::class, 'destroy']);
+Route::group(["prefix" => "comments", 'middleware' => ['auth:sanctum']], function () {
+    Route::put('/{comment}', [CommentController::class, 'update']);
+    Route::delete('/{comment}', [CommentController::class, 'destroy']);
 });
 
 Route::apiResource('tags', TagController::class);

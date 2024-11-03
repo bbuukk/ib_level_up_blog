@@ -2,36 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\Comment;
 use App\Services\CommentService;
-use Illuminate\Http\Request;
 
-use App\Http\Requests\UpdateCommentRequest;
+use App\Http\Requests\Comments\UpdateCommentRequest;
 
 class CommentController
 {
 
     public function __construct(private CommentService $commentService) {}
 
-    public function update(int $commentId, Request $request)
+    public function update(Comment $comment, UpdateCommentRequest $request)
     {
-        $newContent = $request->input('content');
+        $newContent = $request->validated('content');
 
-        $comment = $this->commentService->findCommentById($commentId);
-        if (is_null($comment)) {
-            abort(404, 'Comment not found');
+        $user = Auth::user();
+
+        if ($comment->author_id !== $user->id) {
+            abort(403, 'Forbidden. Please authorize as the comment author to make changes.');
         }
+
         $this->commentService->update($comment, $newContent);
 
         return response()->json($comment, '200');
     }
 
-    public function destroy(int $commentId)
+    public function destroy(Comment $comment)
     {
+        $user = Auth::user();
 
-        $comment = $this->commentService->findCommentById($commentId);
-        if (is_null($comment)) {
-            abort(404, 'Comment not found');
+        if ($comment->author_id !== $user->id) {
+            abort(403, 'Forbidden. Please authorize as the comment author to delete it.');
         }
 
         $comment->delete();

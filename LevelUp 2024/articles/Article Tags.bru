@@ -1,0 +1,18 @@
+meta {
+  name: Article Tags
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8000/api/articles/1/tags/?page=1&perPage=10&sort=field1&sort[created_at]=asc
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 1
+  perPage: 10
+  sort: field1
+  sort[created_at]: asc
+}
