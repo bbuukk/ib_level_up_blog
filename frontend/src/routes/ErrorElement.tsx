@@ -1,3 +1,4 @@
+import { Text, Title } from '@mantine/core';
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
 
 const ErrorPage = () => {
@@ -12,11 +13,9 @@ const ErrorPage = () => {
   }
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center bg-gray-100">
-      <h1 className="text-4xl font-bold text-gray-800">
-        Sorry, an unexpected error has occurred.
-      </h1>
-      <p className="text-lg text-gray-600">{errorMessage}</p>
+    <div className="flex h-screen flex-col items-center justify-center">
+      <Title order={2}>Sorry, an unexpected error has occurred.</Title>
+      <Text size="md">{errorMessage}</Text>
     </div>
   );
 };
