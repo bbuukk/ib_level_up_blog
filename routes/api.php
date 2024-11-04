@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\SampleController;
 use App\Http\Controllers\TagController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -10,21 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-/**
- * Add your routes below, one per line
- */
-
-Route::get('/version', [SampleController::class, 'version']);
-Route::post('/echo', [SampleController::class, 'echo']);
-
 /**
  * Users
  */
-
 
 Route::get('/users', function () {
     $users = User::query()->get();
