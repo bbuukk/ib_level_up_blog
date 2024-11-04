@@ -9,7 +9,7 @@ interface NavigationBarProps {
 }
 
 const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
-  const { login, logout } = useAuth();
+  const { logout } = useAuth();
 
   return (
     <header className="header">
@@ -23,6 +23,11 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
             <li>
               <Link to="/" className="nav__link">
                 Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/articles" className="nav__link">
+                Articles
               </Link>
             </li>
             <li>

@@ -9,6 +9,7 @@ import { MantineProvider } from '@mantine/core';
 import AuthProvider from 'features/authentication/contexts/AuthProvider';
 import ProtectedRoute from 'features/authentication/ProtectedRoute';
 import ErrorPage from 'routes/ErrorElement';
+import ArticlesPage from 'routes/ArticlesPage';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
           {
             path: '/basic-react-query',
             element: <BasicReactQuery />
+          },
+          {
+            path: '/articles',
+            element: <ArticlesPage />
           },
           {
             path: '/profile',
