@@ -1,6 +1,24 @@
+import { useQuery } from '@tanstack/react-query';
 import './style.scss';
+import { getArticles } from 'utils/axios';
+import CreateArticle from './CreateArticle';
+import useGetArticles from './server/useGetArticles';
 
 const ArticlesContainer = () => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['articles'],
+    queryFn: getArticles
+  });
+
+  const { data: anotherData } = useGetArticles();
+
+  console.log('RQ data, isLoading:', data, isLoading);
+  console.log('Another RQ instance:', anotherData);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <main>
       <section className="articlesHero">
@@ -8,6 +26,8 @@ const ArticlesContainer = () => {
           <h1>Articles</h1>
         </div>
       </section>
+
+      <CreateArticle />
 
       <section className="articlesPageList">
         <div className="container--articlesPageList">
@@ -41,71 +61,26 @@ const ArticlesContainer = () => {
           </div>
           <div className="articlesList">
             {/* <!-- start articleCard --> */}
-            <a href="" className="articleCard">
-              <div className="premiumFlag--articleCard">
-                <img className="" src="/assets/images/premium-icon.svg" />
-              </div>
-              <div className="articleCard__imgBox">
-                <img src="https://picsum.photos/500/380" alt="" />
-              </div>
-              <div className="articleCard__body">
-                <div className="tag--articleCard">Design</div>
-                <div className="cardContent cardContent--articleCard">
-                  <p className="cardContent__date">May, 4 2024</p>
-                  <h3 className="cardContent__title">Lorem ipsum dolor sit</h3>
-                  <p className="cardContent__author">By: Author Name</p>
+            {data?.data.map((article) => (
+              <a href="" className="articleCard" key={article.id}>
+                <div className="premiumFlag--articleCard">
+                  <img className="" src="/assets/images/premium-icon.svg" />
                 </div>
-              </div>
-            </a>
+                <div className="articleCard__imgBox">
+                  <img src="https://picsum.photos/500/380" alt="" />
+                </div>
+                <div className="articleCard__body">
+                  <div className="tag--articleCard">Design</div>
+                  <div className="cardContent cardContent--articleCard">
+                    <p className="cardContent__date">May, 4 2024</p>
+                    <h3 className="cardContent__title">{article.title}</h3>
+                    <p className="cardContent__author">By: Author Name</p>
+                  </div>
+                </div>
+              </a>
+            ))}
+
             {/* end articleCard */}
-            <a href="" className="articleCard">
-              <div className="premiumFlag--articleCard">
-                <img className="" src="/assets/images/premium-icon.svg" />
-              </div>
-              <div className="articleCard__imgBox">
-                <img src="https://picsum.photos/500/380" alt="" />
-              </div>
-              <div className="articleCard__body">
-                <div className="tag--articleCard">Design</div>
-                <div className="cardContent cardContent--articleCard">
-                  <p className="cardContent__date">May, 4 2024</p>
-                  <h3 className="cardContent__title">Lorem ipsum dolor sit</h3>
-                  <p className="cardContent__author">By: Author Name</p>
-                </div>
-              </div>
-            </a>
-            <a href="" className="articleCard">
-              <div className="premiumFlag--articleCard">
-                <img className="" src="/assets/images/premium-icon.svg" />
-              </div>
-              <div className="articleCard__imgBox">
-                <img src="https://picsum.photos/500/380" alt="" />
-              </div>
-              <div className="articleCard__body">
-                <div className="tag--articleCard">Design</div>
-                <div className="cardContent cardContent--articleCard">
-                  <p className="cardContent__date">May, 4 2024</p>
-                  <h3 className="cardContent__title">Lorem ipsum dolor sit</h3>
-                  <p className="cardContent__author">By: Author Name</p>
-                </div>
-              </div>
-            </a>
-            <a href="" className="articleCard">
-              <div className="premiumFlag--articleCard">
-                <img className="" src="/assets/images/premium-icon.svg" />
-              </div>
-              <div className="articleCard__imgBox">
-                <img src="https://picsum.photos/500/380" alt="" />
-              </div>
-              <div className="articleCard__body">
-                <div className="tag--articleCard">Design</div>
-                <div className="cardContent cardContent--articleCard">
-                  <p className="cardContent__date">May, 4 2024</p>
-                  <h3 className="cardContent__title">Lorem ipsum dolor sit</h3>
-                  <p className="cardContent__author">By: Author Name</p>
-                </div>
-              </div>
-            </a>
           </div>
           <nav className="pagination">
             <ul className="pagination__list">
