@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Tags;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateArticleRequest extends FormRequest
+class UpdateTagRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class UpdateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['string', 'max:255'],
-            'content' => ['string']
+            'label' => ['string', 'max:255']
         ];
     }
 }

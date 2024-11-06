@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateArticleRequest;
+use App\Http\Requests\Articles\UpdateArticleRequest;
+use App\Http\Requests\Articles\StoreArticleRequest;
 
-use App\Http\Requests\StoreArticleRequest;
-use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\Comments\StoreCommentRequest;
 
 use App\Models\Article;
