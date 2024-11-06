@@ -64,8 +64,8 @@ Route::get('/me', function () {
 Route::group(["prefix" => "articles"], function () {
 
     Route::get('/', [ArticleController::class, 'index']);
-    Route::get('/{articleId}', [ArticleController::class, 'show']);
-    Route::get('/{articleId}/comments', [ArticleController::class, 'comments']);
+    Route::get('/{article}', [ArticleController::class, 'show']);
+    Route::get('/{article}/comments', [ArticleController::class, 'comments']);
     Route::get('/tags/{tag}', [ArticleController::class, 'getArticlesByTag']);
 
 
@@ -75,9 +75,9 @@ Route::group(["prefix" => "articles"], function () {
         Route::post('/{article}/comments', [ArticleController::class, 'addComment']);
         Route::post('/{article}/tags/{tag}', [ArticleController::class, 'linkTagWithArticle']);
 
-        Route::put('/{articleId}', [ArticleController::class, 'update']);
+        Route::put('/{article}', [ArticleController::class, 'update']);
 
-        Route::delete('/{articleId}', [ArticleController::class, 'destroy']);
+        Route::delete('/{article}', [ArticleController::class, 'destroy']);
         Route::delete('/{article}/tags/{tag}', [ArticleController::class, 'removeTagFromArticle']);
     });
 });

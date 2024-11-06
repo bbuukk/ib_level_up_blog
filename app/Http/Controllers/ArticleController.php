@@ -49,19 +49,10 @@ class ArticleController
         return $response;
     }
 
-    // display
-    // findById
-    public function show(int $articleId)
+    public function show(Article $article)
     {
-        // view layer (input) - does nothing
+        $article = $article->load('author');
 
-        // model layer - fetch article
-        $article = $this->articleService->findArticleById($articleId);
-        if (is_null($article)) {
-            abort(404, 'Article not found');
-        }
-
-        // view layer (output) - does nothing, rely on automatic conversion to JSON
         return $article;
     }
 
@@ -82,25 +73,14 @@ class ArticleController
         return $comments;
     }
 
-    // create
-    // saveArticle
-    // persist
-    // newArticle
     public function store(StoreArticleRequest $request)
     {
-        // view layer - validate the request
         $title = $request->validated('title');
         $content = $request->validated('content');
         $author = Auth::user();
 
-        //$author = $this->getIdentityFromAuthorizationHeader($request);
-
-        // model layer - do the thing with the data (store)
         $this->articleService->store($title, $content, $author);
 
-        // view layer - render response
-        // return $this->generateCsv()
-        // return $this->sendEmailToAuthor()
         return response(status: 201);
     }
 
@@ -115,18 +95,11 @@ class ArticleController
         return response(status: 201);
     }
 
-    public function update(int $articleId, UpdateArticleRequest $request)
+    public function update(Article $article, UpdateArticleRequest $request)
     {
-
         $newArticle = $request->validated();
 
         $user = Auth::user();
-
-        $article = $this->articleService->findArticleById($articleId);
-        if (is_null($article)) {
-            abort(404, 'Article not found');
-        }
-
         if ($article->author_id !== $user->id) {
             abort(403, 'Forbidden. Please authorize as the article author to make changes.');
         }
@@ -136,21 +109,12 @@ class ArticleController
         return response()->json($article, '200');
     }
 
-    public function destroy(int $articleId)
+    public function destroy(Article $article)
     {
-
         $user = Auth::user();
-
-        $article = $this->articleService->findArticleById($articleId);
-        if (is_null($article)) {
-            abort(404, 'Article not found');
-        }
-
-
         if ($article->author_id !== $user->id) {
             abort(403, 'Forbidden. Please authorize as the article author to make changes.');
         }
-
 
         $this->articleService->destroy($article);
 
