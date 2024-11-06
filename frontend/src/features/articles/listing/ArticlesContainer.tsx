@@ -35,7 +35,7 @@ const ArticlesContainer = () => {
             <form action="" className="searchArticlesForm">
               <input type="text" placeholder="Search by keyword.." />
               <button>
-                <img src="/assets/images/search-icon.svg" alt="" />
+                <img src="/src/assets/images/search-icon.svg" alt="" />
               </button>
             </form>
             <nav>

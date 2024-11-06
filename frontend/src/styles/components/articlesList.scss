@@ -4,7 +4,6 @@
   border-radius: 40px;
   border: 1px solid $primary;
   gap: 4px;
-
 }
 
 .articlesList {
@@ -15,7 +14,7 @@
   padding-top: 6px;
   margin-top: 44px;
 
-  @include media($mobile){
+  @include media($mobile) {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -64,6 +63,18 @@
 .pagination__item--active {
   @extend .pagination__item;
   background-color: $primary;
-  pointer-events: none
+  pointer-events: none;
 }
 
+.articlesListHeading {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: flex-start;
+
+  @include media($tablet) {
+    flex-direction: column;
+    gap: 10px;
+    align-self: center;
+  }
+}
