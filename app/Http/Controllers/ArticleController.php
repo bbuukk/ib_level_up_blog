@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateArticleRequest;
 
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\Comments\StoreCommentRequest;
 
 use App\Models\Article;
 use App\Models\Tag;
@@ -104,15 +105,13 @@ class ArticleController
         return response(status: 201);
     }
 
-    public function addComment(int $articleId, StoreCommentRequest $request)
+    public function addComment(Article $article, StoreCommentRequest $request)
     {
         $content = $request->validated('content');
 
-        $article = $this->articleService->findArticleById($articleId);
-        if (is_null($article)) {
-            abort(404, 'Article not found');
-        }
-        $this->articleService->addComment($article, $content);
+        $author = Auth::user();
+
+        $this->articleService->addComment($article, $content, $author);
 
         return response(status: 201);
     }
