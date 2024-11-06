@@ -1,23 +1,42 @@
-import { useQuery } from '@tanstack/react-query';
 import './style.scss';
-import { getArticles } from 'utils/axios';
-import CreateArticle from './CreateArticle';
-import useGetArticles from './server/useGetArticles';
+
+import useGetArticles from '../server/useGetArticles';
+import ArticlesList from './ArticlesList';
+import { useState } from 'react';
+import SearchParams from '../types/SearchParams';
+import { useForm } from '@mantine/form';
+import { TextInput } from '@mantine/core';
 
 const ArticlesContainer = () => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['articles'],
-    queryFn: getArticles
+  const [searchParams, setSearchParams] = useState<SearchParams>({
+    page: 1
   });
 
-  const { data: anotherData } = useGetArticles();
+  const { data } = useGetArticles(searchParams);
 
-  console.log('RQ data, isLoading:', data, isLoading);
-  console.log('Another RQ instance:', anotherData);
+  const searchKeyWordForm = useForm<{ searchKeyword: string }>({
+    initialValues: {
+      searchKeyword: ''
+    }
+  });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const handlSearchKeywordForm = ({
+    searchKeyword
+  }: {
+    searchKeyword: string;
+  }) => {
+    setSearchParams({
+      page: 1,
+      search: searchKeyword ? searchKeyword : undefined
+    });
+  };
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({
+      ...searchParams,
+      page
+    });
+  };
 
   return (
     <main>
@@ -27,16 +46,18 @@ const ArticlesContainer = () => {
         </div>
       </section>
 
-      <CreateArticle />
-
       <section className="articlesPageList">
         <div className="container--articlesPageList">
           <div className="articlesListHeading">
-            <form action="" className="searchArticlesForm">
-              <input type="text" placeholder="Search by keyword.." />
-              <button>
-                <img src="/src/assets/images/search-icon.svg" alt="" />
-              </button>
+            <form
+              className="searchArticlesForm"
+              onSubmit={searchKeyWordForm.onSubmit(handlSearchKeywordForm)}
+            >
+              <TextInput
+                {...searchKeyWordForm.getInputProps('searchKeyword')}
+                placeholder="Search by keyword..."
+                mr="sm"
+              />
             </form>
             <nav>
               <ul className="listTabs">
@@ -59,43 +80,25 @@ const ArticlesContainer = () => {
               </select>
             </div>
           </div>
-          <div className="articlesList">
-            {/* <!-- start articleCard --> */}
-            {data?.data.map((article) => (
-              <a href="" className="articleCard" key={article.id}>
-                <div className="premiumFlag--articleCard">
-                  <img className="" src="/assets/images/premium-icon.svg" />
-                </div>
-                <div className="articleCard__imgBox">
-                  <img src="https://picsum.photos/500/380" alt="" />
-                </div>
-                <div className="articleCard__body">
-                  <div className="tag--articleCard">Design</div>
-                  <div className="cardContent cardContent--articleCard">
-                    <p className="cardContent__date">May, 4 2024</p>
-                    <h3 className="cardContent__title">{article.title}</h3>
-                    <p className="cardContent__author">By: Author Name</p>
-                  </div>
-                </div>
-              </a>
-            ))}
 
-            {/* end articleCard */}
-          </div>
+          <ArticlesList searchParams={searchParams} />
+
           <nav className="pagination">
             <ul className="pagination__list">
-              <li className="pagination__item--active">
-                <span>1</span>
-              </li>
-              <li className="pagination__item">
-                <span>2</span>
-              </li>
-              <li className="pagination__item">
-                <span>3</span>
-              </li>
-              <li className="pagination__item">
-                <span>4</span>
-              </li>
+              {Array.from(
+                { length: data?.last_page as number },
+                (_, index) => index + 1
+              ).map((page) => (
+                <li
+                  className={`pagination__item ${
+                    searchParams.page === page ? 'pagination__item--active' : ''
+                  }`}
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                >
+                  <span>{page}</span>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>

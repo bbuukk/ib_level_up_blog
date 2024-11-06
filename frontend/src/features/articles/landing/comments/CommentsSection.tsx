@@ -1,7 +1,7 @@
 import CommentComponent from './Comment';
 import CommentForm from './CommentForm';
 
-import Comment from 'types/Comment';
+import Comment from 'types/ApiComment';
 
 import { useState } from 'react';
 

@@ -4,7 +4,7 @@ import {
 } from 'features/authentication/contexts/AuthProvider';
 import './Root.scss';
 
-import Article from 'types/Article';
+import Article from 'types/ApiArticle';
 
 import { axiosInstance } from 'utils/axios';
 import { useLoaderData } from 'react-router-dom';

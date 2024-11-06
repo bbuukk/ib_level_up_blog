@@ -1,4 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { StrictMode } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -13,6 +17,7 @@ import ArticlesPage from 'routes/ArticlesPage';
 import ArticleLandingPage, {
   loader as landingArticleLoader
 } from 'routes/ArticleLandingPage';
+import { notifications, Notifications } from '@mantine/notifications';
 
 const router = createBrowserRouter([
   {
@@ -54,12 +59,22 @@ const router = createBrowserRouter([
   }
 ]);
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error, query) =>
+      notifications.show({
+        title: 'Error',
+        message: `Something went wrong: ${error.message}`,
+        color: 'red'
+      })
+  })
+});
 
 function App() {
   return (
     <StrictMode>
       <MantineProvider forceColorScheme="dark">
+        <Notifications />
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <RouterProvider router={router} />

@@ -3,7 +3,7 @@ import { axiosInstance } from 'utils/axios';
 import { useLoaderData } from 'react-router-dom';
 
 import { LoaderFunctionArgs } from 'react-router-dom';
-import Article from 'types/Article';
+import Article from 'types/ApiArticle';
 import CommentsSection from 'features/articles/landing/comments/CommentsSection';
 
 export async function loader({ params }: LoaderFunctionArgs): Promise<Article> {

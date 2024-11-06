@@ -3,7 +3,7 @@ import { TextInput, Button } from '@mantine/core';
 import { z } from 'zod';
 import { storeComment } from 'utils/axios';
 
-import Comment from 'types/Comment';
+import Comment from 'types/ApiComment';
 
 import React, { useState } from 'react';
 import {

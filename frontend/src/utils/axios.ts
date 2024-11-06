@@ -1,12 +1,13 @@
 import axios from 'axios';
+import SearchParams from 'features/articles/types/SearchParams';
 import ApiLoginResponse from 'features/authentication/types/ApiLoginResponse';
 import LoginForm from 'features/authentication/types/LoginForm';
 import ApiArticle from 'types/ApiArticle';
-import ApiPaginatedRequestParams from 'types/ApiPaginatedRequestParams';
 import ApiPaginatedResponse from 'types/ApiPaginatedResponse';
 import ApiUser from 'types/ApiUser';
-import Comment from 'types/Comment';
+import Comment from 'types/ApiComment';
 import CreateArticleFormData from 'types/CreateArticvleFormData';
+import { PAGE_SIZE } from './constants';
 
 export const axiosBaseConfig = {
   baseURL: import.meta.env.VITE_SERVER_URL,
@@ -61,15 +62,14 @@ export const storeComment = async (
   return response.data;
 };
 
-export const getArticles = async () => {
-  const defaultParams: ApiPaginatedRequestParams = {
-    page: 1,
-    perPage: 20
-  };
+export const getArticles = async (searchParams: SearchParams) => {
   const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
     method: 'GET',
     url: '/api/articles',
-    params: defaultParams
+    params: {
+      ...searchParams,
+      perPage: PAGE_SIZE
+    }
   });
 
   return response.data;
