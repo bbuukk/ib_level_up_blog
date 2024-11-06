@@ -6,6 +6,18 @@ meta {
 
 put {
   url: http://localhost:8000/api/comments/1
-  body: none
+  body: json
   auth: none
+}
+
+headers {
+  Authorization: Bearer 2|QFaN6eB8AgrklzVEZg5vyB7Hx62vGIMQ8uYri22d513143ca
+}
+
+body:json {
+  {
+    "content" : "test"
+  }
+    
+  
 }

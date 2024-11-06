@@ -5,9 +5,14 @@ meta {
 }
 
 get {
-  url: http://localhost:8000/api/articles
+  url: http://localhost:8000/api/articles/?perPage=5&sort[created_at]=desc
   body: none
   auth: none
+}
+
+params:query {
+  perPage: 5
+  sort[created_at]: desc
 }
 
 headers {
