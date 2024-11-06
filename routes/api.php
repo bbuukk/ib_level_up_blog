@@ -44,7 +44,6 @@ Route::post('/login', function (Request $request) {
         throw new Exception('invalid password');
     }
 
-
     $token = $user->createToken('name-irrelevant');
 
     return [
@@ -66,6 +65,7 @@ Route::group(["prefix" => "articles"], function () {
     Route::get('/', [ArticleController::class, 'index']);
     Route::get('/{article}', [ArticleController::class, 'show']);
     Route::get('/{article}/comments', [ArticleController::class, 'comments']);
+    Route::get('/{article}/tags', [ArticleController::class, 'getArticleTags']);
     Route::get('/tags/{tag}', [ArticleController::class, 'getArticlesByTag']);
 
 

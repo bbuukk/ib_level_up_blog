@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+
+use App\Http\Requests\Articles\IndexArticleRequest;
 use App\Http\Requests\Articles\UpdateArticleRequest;
 use App\Http\Requests\Articles\StoreArticleRequest;
 
 use App\Http\Requests\Comments\StoreCommentRequest;
+use App\Http\Requests\Comments\IndexCommentRequest;
+
+use App\Http\Requests\Tags\IndexTagRequest;
 
 use App\Models\Article;
 use App\Models\Tag;
 
 use App\Services\ArticleService;
 use App\Services\TagService;
-
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\Auth;
 
 class ArticleController
@@ -21,32 +26,18 @@ class ArticleController
 
     public function __construct(private ArticleService $articleService, private TagService $tagService) {}
 
-    // list
-    // showAllArticle
-    public function index()
+    public function index(IndexArticleRequest $request): CursorPaginator
     {
-        // view layer (input) -> later on we will have pagination and search
+        $data = $request->validated();
+        ['perPage' => $perPage, 'sort' => $sort, 'cursor' => $cursor] = $data;
 
-        // model layer - fetch all articles from the DB
-        $articles = $this->articleService->listAllArticles();
+        $query = $this->articleService->listAllArticles($sort);
 
-        // view layer (output) - transform the response in some way (there is a better way to do this with Laravel)
-        $response = [];
-        foreach ($articles as $article) {
-            array_push($response, [
-                'id' => $article->id,
-                'content' => $article->content,
-                'title' => $article->title,
-                'created_at' => $article->created_at,
-                'updated_at' => $article->updated_at,
-                'author' => [
-                    'id' => $article->author()->first()->id,
-                    'name' => $article->author()->first()->name,
-                ]
-            ]);
-        }
-
-        return $response;
+        return $query
+            // fallback unique column for cursor pagination
+            ->orderBy('id', 'desc')
+            ->cursorPaginate(perPage: $perPage, cursor: $cursor)
+            ->withQueryString();
     }
 
     public function show(Article $article)
@@ -56,21 +47,30 @@ class ArticleController
         return $article;
     }
 
-    // getComments
-    // articleComments
-    public function comments(int $articleId): Collection
+    public function comments(IndexCommentRequest $request, Article $article): CursorPaginator
     {
-        // view layer (input) - does nothing
+        $data = $request->validated();
+        ['perPage' => $perPage, 'sort' => $sort, 'cursor' => $cursor] = $data;
 
-        // model layer - fetch article + fetch comments for that article
-        $article = $this->articleService->findArticleById($articleId);
-        if (is_null($article)) {
-            abort(404, 'Article not found');
-        }
-        $comments = $this->articleService->getCommentsForArticle($article);
+        $query = $this->articleService->getCommentsForArticle($article, $sort);
 
-        // view layer (output) - does nothing, rely on automatic conversion to JSON
-        return $comments;
+        return $query
+            // fallback unique column for cursor pagination
+            ->orderBy('id', 'desc')
+            ->cursorPaginate(perPage: $perPage, cursor: $cursor)
+            ->withQueryString();
+    }
+
+    public function getArticleTags(IndexTagRequest $request, Article $article): LengthAwarePaginator
+    {
+        $data = $request->validated();
+        ['page' => $page, 'perPage' => $perPage, 'sort' => $sort] = $data;
+
+        $tags = $this->articleService->getTagsForArticle($article, $sort);
+
+        return $tags
+            ->paginate(perPage: $perPage, page: $page)
+            ->withQueryString();
     }
 
     public function store(StoreArticleRequest $request)
@@ -121,11 +121,18 @@ class ArticleController
         return response()->json($article, '204');
     }
 
-    public function getArticlesByTag(Tag $tag)
+    public function getArticlesByTag(IndexArticleRequest $request, Tag $tag)
     {
-        $articles = $tag->articles()->get();
+        $data = $request->validated();
+        ['perPage' => $perPage, 'sort' => $sort, 'cursor' => $cursor] = $data;
 
-        return response()->json($articles, '200');
+        $query = $this->articleService->listAllArticlesByTag($tag, $sort);
+
+        return $query
+            // fallback unique column for cursor pagination
+            ->orderBy('id', 'desc')
+            ->cursorPaginate(perPage: $perPage, cursor: $cursor)
+            ->withQueryString();
     }
 
     public function linkTagWithArticle(Article $article, Tag $tag)

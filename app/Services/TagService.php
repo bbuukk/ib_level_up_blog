@@ -2,15 +2,22 @@
 
 namespace App\Services;
 
-use App\Models\Article;
 use App\Models\Comment;
 use App\Models\Tag;
 
+use App\Traits\SortByDirectModelAttribute;
+
 class TagService
 {
-    public function listAllTags()
+    use SortByDirectModelAttribute;
+
+    public function listAllTags(array $sort)
     {
-        return Tag::query()->get();
+        $query = Tag::query();
+
+        $query = $this->sortByDirectModelAttribute($query, $sort);
+
+        return $query;
     }
 
     public function findTagById(int $tagId): ?Tag

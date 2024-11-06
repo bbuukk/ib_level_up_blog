@@ -17,10 +17,14 @@ class ArticleFactory extends Factory
      */
     public function definition(): array
     {
+        $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
+
         return [
             'title' => $this->faker->sentence(6),
             'content' => $this->faker->paragraph(5),
-            'author_id' => User::factory()
+            'author_id' => User::factory(),
+            'created_at' => $createdAt,
+            'updated_at' => $createdAt
         ];
     }
 }

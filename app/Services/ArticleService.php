@@ -2,16 +2,35 @@
 
 namespace App\Services;
 
+use App\Models\Tag;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\User;
 
+use App\Traits\SortByDirectModelAttribute;
+
 class ArticleService
 {
-    public function listAllArticles()
+    use SortByDirectModelAttribute;
+
+    public function listAllArticles(array $sort)
     {
-        return Article::query()->get();
+        $query = Article::query();
+
+        $query = $this->sortByDirectModelAttribute($query, $sort);
+
+        return $query->with('author');
     }
+
+    public function listAllArticlesByTag(Tag $tag, array $sort)
+    {
+        $query = $tag->articles();
+
+        $query = $this->sortByDirectModelAttribute($query, $sort);
+
+        return $query->with('author');
+    }
+
 
     public function store(
         string $title,
@@ -35,17 +54,33 @@ class ArticleService
             ->first();
     }
 
-    public function getCommentsForArticle(Article $article)
-    {
-        return $article
-            ->comments()
-            ->get();
+    public function getCommentsForArticle(
+        Article $article,
+        array $sort,
+    ) {
+        $query = $article->comments();
+
+        $query = $this->sortByDirectModelAttribute($query, $sort);
+
+        return $query->with('author');
     }
 
-    public function addComment(Article $article, string $commentContent)
+    public function getTagsForArticle(
+        Article $article,
+        array $sort
+    ) {
+        $query = $article->tags();
+
+        $query = $this->sortByDirectModelAttribute($query, $sort);
+
+        return $query;
+    }
+
+    public function addComment(Article $article, string $commentContent, User $author)
     {
         $comment = new Comment;
         $comment->content = $commentContent;
+        $comment->author()->associate($author);
 
         $article->comments()->save($comment);
     }

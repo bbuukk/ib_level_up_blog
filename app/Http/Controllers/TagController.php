@@ -8,19 +8,24 @@ use App\Http\Requests\Tags\UpdateTagRequest;
 
 use App\Models\Tag;
 
-
 use App\Services\TagService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TagController
 {
 
     public function __construct(private TagService $tagService) {}
 
-    public function index()
+    public function index(IndexTagRequest $request): LengthAwarePaginator
     {
-        $tags = $this->tagService->listAllTags();
+        $data = $request->validated();
+        ['page' => $page, 'perPage' => $perPage, 'sort' => $sort] = $data;
 
-        return $tags;
+        $tags = $this->tagService->listAllTags($sort);
+
+        return $tags
+            ->paginate(perPage: $perPage, page: $page)
+            ->withQueryString();
     }
 
     public function show(Tag $tag)
