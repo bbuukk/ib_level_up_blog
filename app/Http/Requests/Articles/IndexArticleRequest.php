@@ -26,6 +26,12 @@ class IndexArticleRequest extends FormRequest
             'sort.created_at' => ['sometimes', 'required', 'string', 'in:asc,desc'],
 
             'cursor' => ['nullable', 'string'],
+
+            'filter' => ['sometimes', 'required', 'array'],
+            'filter.authorId' => ['sometimes', 'required', 'numeric', 'exists:users,id'],
+            'filter.createdSinceDate' => ['sometimes', 'required', 'date'],
+
+            'search' => ['sometimes', 'required', 'string']
         ];
     }
 }

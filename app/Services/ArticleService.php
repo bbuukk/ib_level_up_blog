@@ -8,18 +8,39 @@ use App\Models\Comment;
 use App\Models\User;
 
 use App\Traits\SortByDirectModelAttribute;
+use Carbon\Carbon;
 
 class ArticleService
 {
     use SortByDirectModelAttribute;
 
-    public function listAllArticles(array $sort)
-    {
+    public function listAllArticles(
+        array $sort,
+        ?int $authorId,
+        ?Carbon $createdSince,
+        ?string $search,
+    ) {
         $query = Article::query();
 
         $query = $this->sortByDirectModelAttribute($query, $sort);
 
-        return $query->with('author');
+        if (!is_null($authorId)) {
+            $query->where('author_id', $authorId);
+        }
+
+        if (!is_null($createdSince)) {
+            $query->where('created_at', '>=', $createdSince);
+        }
+
+        if (!is_null($search)) {
+            $query
+                ->where('title', 'ilike', "%$search%")
+                ->orWhere('content', 'ilike', "%$search%");
+        }
+
+        $query->with('author');
+
+        return $query;
     }
 
     public function listAllArticlesByTag(Tag $tag, array $sort)

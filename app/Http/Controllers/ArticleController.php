@@ -18,8 +18,10 @@ use App\Models\Tag;
 
 use App\Services\ArticleService;
 use App\Services\TagService;
+use Carbon\Carbon;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\Auth;
+
 
 class ArticleController
 {
@@ -28,10 +30,24 @@ class ArticleController
 
     public function index(IndexArticleRequest $request): CursorPaginator
     {
-        $data = $request->validated();
-        ['perPage' => $perPage, 'sort' => $sort, 'cursor' => $cursor] = $data;
+        $perPage = (int) $request->validated('perPage');
+        $sort = $request->validated('sort');
 
-        $query = $this->articleService->listAllArticles($sort);
+        $cursor = (int) $request->validated('cursor');
+
+        $authorId = $request->validated('filter.authorId');
+        $createdSince = $request->validated('filter.createdSinceDate')
+            ? Carbon::parse($request->validated('filter.createdSinceDate'))
+            : null;
+        $search = $request->validated('search');
+
+
+        $query = $this->articleService->listAllArticles(
+            $sort,
+            $authorId,
+            $createdSince,
+            $search,
+        );
 
         return $query
             // fallback unique column for cursor pagination
