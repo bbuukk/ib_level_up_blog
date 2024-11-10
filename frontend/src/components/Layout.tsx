@@ -15,7 +15,7 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
     <header className="header">
       <div className="container--header">
         <a href="/" className="header__logo">
-          Acad asdfasdemy<span>Blog</span>
+          aspire <span>Blog</span>
         </a>
         {/* add ".nav--active" modifier to trigger mobile nav */}
         <nav className="nav">

@@ -4,9 +4,33 @@ import {
 } from 'features/authentication/contexts/AuthProvider';
 import './Root.scss';
 
+import Article from 'types/Article';
+
+import { axiosInstance } from 'utils/axios';
+import { useLoaderData } from 'react-router-dom';
+
+import FeaturedArticleCard from 'features/articles/FeaturedArticleCard';
+import ArticleCard from 'features/articles/ArticleCard';
+
+export async function articlesLoader() {
+  const response = await axiosInstance({
+    method: 'get',
+    url: `/api/articles/?page=1&perPage=10`
+  });
+
+  return response.data;
+}
+
+interface ArticleResponse {
+  data: Article[];
+}
+
 const Root = () => {
   const { isAuthorized } = useAuth();
 
+  const articlesResponse = useLoaderData() as ArticleResponse;
+
+  console.log(articlesResponse);
   return (
     <>
       <main>
@@ -35,84 +59,15 @@ const Root = () => {
               <a href="#">All featured news</a>
             </div>
             <div className="featuredCardsList">
-              {/* start featuredCard */}
-              <a href="" className="featuredCard">
-                <img
-                  className="featuredCard__image"
-                  src="https://picsum.photos/500/380"
-                />
-                <div className="featuredCard__overlay" />
-                <div className="featuredCard__content">
-                  <div className="premiumFlag--featuredCard">
-                    <img
-                      className=""
-                      src="/src/assets/images/premium-icon.svg"
-                    />
-                  </div>
-                  <div className="tag--featuredCard">Design</div>
-                  {/* Use this as component in featuredArticleCard and articleCard - name - "cardContent"  */}
-                  <div className="cardContent--featuredCard">
-                    <p className="cardContent__date">May, 4 2024</p>
-                    <h3 className="cardContent__title">
-                      Lorem ipsum dolor sit
-                    </h3>
-                    <p className="cardContent__author">By: Author Name</p>
-                  </div>
-                </div>
-              </a>
-              {/* end featuredCard */}
-              {/* start featuredCard */}
-              <a href="" className="featuredCard">
-                <img
-                  className="featuredCard__image"
-                  src="https://picsum.photos/500/381"
-                />
-                <div className="featuredCard__overlay" />
-                <div className="featuredCard__content">
-                  <div className="premiumFlag--featuredCard">
-                    <img
-                      className=""
-                      src="/src/assets/images/premium-icon.svg"
-                    />
-                  </div>
-                  <div className="tag--featuredCard">Design</div>
-                  {/* Use this as component in featuredArticleCard and articleCard - name - "cardContent"  */}
-                  <div className="cardContent--featuredCard">
-                    <p className="cardContent__date">May, 4 2024</p>
-                    <h3 className="cardContent__title">
-                      Lorem ipsum dolor sit
-                    </h3>
-                    <p className="cardContent__author">By: Author Name</p>
-                  </div>
-                </div>
-              </a>
-              {/* end featuredCard */}
-              {/* start featuredCard */}
-              <a href="" className="featuredCard">
-                <img
-                  className="featuredCard__image"
-                  src="https://picsum.photos/500/382"
-                />
-                <div className="featuredCard__overlay" />
-                <div className="featuredCard__content">
-                  <div className="premiumFlag--featuredCard">
-                    <img
-                      className=""
-                      src="/src/assets/images/premium-icon.svg"
-                    />
-                  </div>
-                  <div className="tag--featuredCard">Design</div>
-                  {/* Use this as component in featuredArticleCard and articleCard - name - "cardContent"  */}
-                  <div className="cardContent--featuredCard">
-                    <p className="cardContent__date">May, 4 2024</p>
-                    <h3 className="cardContent__title">
-                      Lorem ipsum dolor sit
-                    </h3>
-                    <p className="cardContent__author">By: Author Name</p>
-                  </div>
-                </div>
-              </a>
-              {/* end featuredCard */}
+              {articlesResponse?.data?.slice(0, 3).map((a) => {
+                return (
+                  <FeaturedArticleCard
+                    key={`article-${a.id}`}
+                    createdAt={a.created_at}
+                    {...a}
+                  />
+                );
+              })}
             </div>
           </div>
         </section>
@@ -137,80 +92,15 @@ const Root = () => {
               </nav>
             </div>
             <div className="articlesList">
-              {/* start articleCard */}
-              <a href="" className="articleCard">
-                <div className="premiumFlag--articleCard">
-                  <img className="" src="/src/assets/images/premium-icon.svg" />
-                </div>
-                <div className="articleCard__imgBox">
-                  <img src="https://picsum.photos/500/380" alt="" />
-                </div>
-                <div className="articleCard__body">
-                  <div className="tag--articleCard">Design</div>
-                  <div className="cardContent cardContent--articleCard">
-                    <p className="cardContent__date">May, 4 2024</p>
-                    <h3 className="cardContent__title">
-                      Lorem ipsum dolor sit
-                    </h3>
-                    <p className="cardContent__author">By: Author Name</p>
-                  </div>
-                </div>
-              </a>
-              {/* end articleCard */}
-              <a href="" className="articleCard">
-                <div className="premiumFlag--articleCard">
-                  <img className="" src="/src/assets/images/premium-icon.svg" />
-                </div>
-                <div className="articleCard__imgBox">
-                  <img src="https://picsum.photos/500/380" alt="" />
-                </div>
-                <div className="articleCard__body">
-                  <div className="tag--articleCard">Design</div>
-                  <div className="cardContent cardContent--articleCard">
-                    <p className="cardContent__date">May, 4 2024</p>
-                    <h3 className="cardContent__title">
-                      Lorem ipsum dolor sit
-                    </h3>
-                    <p className="cardContent__author">By: Author Name</p>
-                  </div>
-                </div>
-              </a>
-              <a href="" className="articleCard">
-                <div className="premiumFlag--articleCard">
-                  <img className="" src="/src/assets/images/premium-icon.svg" />
-                </div>
-                <div className="articleCard__imgBox">
-                  <img src="https://picsum.photos/500/380" alt="" />
-                </div>
-                <div className="articleCard__body">
-                  <div className="tag--articleCard">Design</div>
-                  <div className="cardContent cardContent--articleCard">
-                    <p className="cardContent__date">May, 4 2024</p>
-                    <h3 className="cardContent__title">
-                      Lorem ipsum dolor sit
-                    </h3>
-                    <p className="cardContent__author">By: Author Name</p>
-                  </div>
-                </div>
-              </a>
-              <a href="" className="articleCard">
-                <div className="premiumFlag--articleCard">
-                  <img className="" src="/src/assets/images/premium-icon.svg" />
-                </div>
-                <div className="articleCard__imgBox">
-                  <img src="https://picsum.photos/500/380" alt="" />
-                </div>
-                <div className="articleCard__body">
-                  <div className="tag--articleCard">Design</div>
-                  <div className="cardContent cardContent--articleCard">
-                    <p className="cardContent__date">May, 4 2024</p>
-                    <h3 className="cardContent__title">
-                      Lorem ipsum dolor sit
-                    </h3>
-                    <p className="cardContent__author">By: Author Name</p>
-                  </div>
-                </div>
-              </a>
+              {articlesResponse?.data?.slice(3, 9).map((a) => {
+                return (
+                  <ArticleCard
+                    key={`article-${a.id}`}
+                    createdAt={a.created_at}
+                    {...a}
+                  />
+                );
+              })}
             </div>
             <div className="latestNews__link">
               <a href="" className="button--latestNews">
@@ -319,3 +209,4 @@ const Root = () => {
 };
 
 export default Root;
+

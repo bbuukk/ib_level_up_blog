@@ -3,7 +3,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { StrictMode } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import BasicReactQuery from 'routes/BasicReactQuery';
-import Root from 'routes/Root';
+import Root, { articlesLoader } from 'routes/Root';
 import Layout from './Layout';
 import { MantineProvider } from '@mantine/core';
 import AuthProvider from 'features/authentication/contexts/AuthProvider';
@@ -21,7 +21,8 @@ const router = createBrowserRouter([
         children: [
           {
             path: '/',
-            element: <Root />
+            element: <Root />,
+            loader: articlesLoader
           },
           {
             path: '/basic-react-query',
