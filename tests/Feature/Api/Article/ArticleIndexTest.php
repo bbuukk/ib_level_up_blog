@@ -62,8 +62,6 @@ class ArticleIndexTest extends TestCase
                         'author'
                     ]
                 ],
-                'next_cursor',
-                'prev_cursor'
             ])
             ->assertJsonCount($perPage, 'data')
             ->assertJson([

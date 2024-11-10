@@ -28,12 +28,12 @@ class ArticleController
 
     public function __construct(private ArticleService $articleService, private TagService $tagService) {}
 
-    public function index(IndexArticleRequest $request): CursorPaginator
+    public function index(IndexArticleRequest $request): LengthAwarePaginator
     {
+
+        $page = (int) $request->validated('page');
         $perPage = (int) $request->validated('perPage');
         $sort = $request->validated('sort');
-
-        $cursor = (int) $request->validated('cursor');
 
         $authorId = $request->validated('filter.authorId');
         $createdSince = $request->validated('filter.createdSinceDate')
@@ -51,8 +51,7 @@ class ArticleController
 
         return $query
             // fallback unique column for cursor pagination
-            ->orderBy('id', 'desc')
-            ->cursorPaginate(perPage: $perPage, cursor: $cursor)
+            ->paginate(page: $page, perPage: $perPage)
             ->withQueryString();
     }
 
