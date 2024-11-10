@@ -1,3 +1,4 @@
+import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { StrictMode } from 'react';
@@ -10,6 +11,9 @@ import AuthProvider from 'features/authentication/contexts/AuthProvider';
 import ProtectedRoute from 'features/authentication/ProtectedRoute';
 import ErrorPage from 'routes/ErrorElement';
 import ArticlesPage from 'routes/ArticlesPage';
+import ArticleLandingPage, {
+  loader as landingArticleLoader
+} from 'routes/ArticleLandingPage';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +37,11 @@ const router = createBrowserRouter([
             element: <ArticlesPage />
           },
           {
+            path: '/articles/:id',
+            element: <ArticleLandingPage />,
+            loader: landingArticleLoader
+          },
+          {
             path: '/profile',
             element: (
               <ProtectedRoute>
@@ -52,6 +61,7 @@ function App() {
   return (
     <StrictMode>
       <MantineProvider forceColorScheme="dark">
+        <Notifications />
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <RouterProvider router={router} />

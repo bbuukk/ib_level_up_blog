@@ -21,7 +21,12 @@ class ArticleFactory extends Factory
 
         return [
             'title' => $this->faker->sentence(6),
-            'content' => $this->faker->paragraph(5),
+            'content' => implode("\n\n", $this->faker->paragraphs(10)),
+            // 'content' => $this->faker->paragraphs(
+            //     $nbParagraphs = 20,
+            //     $asText = false,
+            //     $nbSentences = 5
+            // ),
             'author_id' => User::factory(),
             'created_at' => $createdAt,
             'updated_at' => $createdAt

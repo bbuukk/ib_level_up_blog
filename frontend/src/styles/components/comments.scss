@@ -2,14 +2,19 @@
   background-color: black;
   padding: 60px 0;
 
-  @include media($mobile){
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding-left: calc(50vw - 50%);
+  padding-right: calc(50vw - 50%);
+
+  @include media($mobile) {
     padding: 30px 0;
     margin-top: 30px;
   }
 }
 
 .containerSmall--comments {
-  @extend .containerSmall;
+  /* @extend .containerSmall; */
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -19,7 +24,7 @@
     font-size: 24px;
     color: $primary;
 
-    @include media($mobile){
+    @include media($mobile) {
       margin-bottom: 14px;
     }
   }
@@ -33,7 +38,7 @@
   background-color: #001722;
   border-radius: 10px;
 
-  @include media($mobileSmall){
+  @include media($mobileSmall) {
     padding: 14px;
     flex-direction: column;
     gap: 14px;
@@ -42,9 +47,10 @@
 
 .comment--form {
   @extend .comment;
-  align-items: center;
 
-  @include media($mobileSmall){
+  position: relative;
+
+  @include media($mobileSmall) {
     .comment__img {
       display: none;
     }
@@ -70,29 +76,45 @@
     font-weight: bold;
     font-size: 16px;
     color: white;
-    padding: 14px 86px 12px 20px;
+    padding: 25px 20px;
     border: 1px solid transparent;
     width: 100%;
     border-radius: 55px;
     box-sizing: border-box;
     background-color: black;
     transition: 300ms;
-    
+
     &:focus {
       outline: none;
       border-color: $primary;
     }
+
+    &::placeholder {
+      color: $primary;
+      font-weight: normal;
+    }
   }
 
-  button {
-    min-width: auto;
-    padding-left: 20px;
-    padding-right: 20px;
-    position: absolute;
-    top: 50%;
-    right: 7px;
-    transform: translateY(-50%);
+  div {
+    min-width: max-content;
+
+    button {
+      margin-right: 20px;
+
+      background-color: $primary;
+      border-radius: 20px;
+      color: black;
+
+      transition: background-color 0.25s ease;
+      &:hover {
+        background-color: darken($color: $primary, $amount: 10);
+      }
+    }
   }
+}
+
+.comment__formError {
+  margin-left: 20px;
 }
 
 .comment__content {
@@ -106,7 +128,8 @@
     color: $primary;
   }
 
-  time, p {
+  time,
+  p {
     font-size: 16px;
   }
 

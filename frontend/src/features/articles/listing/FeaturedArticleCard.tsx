@@ -7,7 +7,7 @@ interface ArticleCardProps {
   id: number;
   title: string;
   createdAt: string;
-  author: User;
+  author?: User;
 }
 
 const FeaturedArticleCard = (articleProps: ArticleCardProps) => {

@@ -11,10 +11,10 @@
 }
 
 .tag--featuredCard {
- @extend .tag;
+  @extend .tag;
   position: absolute;
   top: 20px;
-  left: 20px; 
+  left: 20px;
   z-index: 3;
 }
 
@@ -22,7 +22,7 @@
   @extend .tag;
   margin-bottom: 30px;
 
-  @include media($mobile){
+  @include media($mobile) {
     margin-bottom: 10px;
   }
 }
@@ -37,9 +37,8 @@
   background-color: transparent;
   color: white;
   cursor: pointer;
-  
+
   &:hover {
     color: $primary;
   }
 }
-

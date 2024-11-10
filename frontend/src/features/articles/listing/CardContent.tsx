@@ -5,7 +5,7 @@ import User from 'types/ApiUser';
 interface ArticleCardProps {
   title: string;
   createdAt: string;
-  author: User;
+  author?: User;
 }
 
 const CardContent = ({ title, createdAt, author }: ArticleCardProps) => {
@@ -21,7 +21,7 @@ const CardContent = ({ title, createdAt, author }: ArticleCardProps) => {
     <div className="cardContent--featuredCard">
       <p className="cardContent__date">{formattedDate}</p>
       <h3 className="cardContent__title">{title}</h3>
-      <p className="cardContent__author">{`By: ${author.name}`}</p>
+      <p className="cardContent__author">{`By: ${author?.name}`}</p>
     </div>
   );
 };

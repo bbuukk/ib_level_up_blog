@@ -2,3 +2,12 @@
   margin: 0;
   padding: 0;
 }
+
+body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+html {
+  overscroll-behavior: none;
+}
