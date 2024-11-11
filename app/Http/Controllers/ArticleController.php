@@ -57,7 +57,13 @@ class ArticleController
 
     public function show(Article $article)
     {
-        $article = $article->load('author');
+        $article->load([
+            'author',
+            'comments' => function ($query) {
+                $query->orderBy('created_at', 'desc')->with('author');
+            },
+            'tags'
+        ]);
 
         return $article;
     }
@@ -102,12 +108,11 @@ class ArticleController
     public function addComment(Article $article, StoreCommentRequest $request)
     {
         $content = $request->validated('content');
-
         $author = Auth::user();
 
-        $this->articleService->addComment($article, $content, $author);
+        $comment = $this->articleService->addComment($article, $content, $author);
 
-        return response(status: 201);
+        return response()->json($comment, '201');
     }
 
     public function update(Article $article, UpdateArticleRequest $request)

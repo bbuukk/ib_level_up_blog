@@ -104,6 +104,7 @@ class ArticleService
         $comment->author()->associate($author);
 
         $article->comments()->save($comment);
+        return $comment;
     }
 
     public function destroy(Article $article)
