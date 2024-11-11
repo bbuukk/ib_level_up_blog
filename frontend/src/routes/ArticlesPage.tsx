@@ -1,4 +1,4 @@
-import ArticlesContainer from 'features/articles/ArticlesContainer';
+import ArticlesContainer from 'features/articles/listing/ArticlesContainer';
 
 const ArticlesPage = () => {
   return <ArticlesContainer />;

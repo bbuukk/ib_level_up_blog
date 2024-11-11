@@ -9,8 +9,8 @@ import Article from 'types/Article';
 import { axiosInstance } from 'utils/axios';
 import { useLoaderData } from 'react-router-dom';
 
-import FeaturedArticleCard from 'features/articles/FeaturedArticleCard';
-import ArticleCard from 'features/articles/ArticleCard';
+import FeaturedArticleCard from 'features/articles/listing/FeaturedArticleCard';
+import ArticleCard from 'features/articles/listing/ArticleCard';
 
 export async function articlesLoader() {
   const response = await axiosInstance({
@@ -30,7 +30,6 @@ const Root = () => {
 
   const articlesResponse = useLoaderData() as ArticleResponse;
 
-  console.log(articlesResponse);
   return (
     <>
       <main>
@@ -209,4 +208,3 @@ const Root = () => {
 };
 
 export default Root;
-
