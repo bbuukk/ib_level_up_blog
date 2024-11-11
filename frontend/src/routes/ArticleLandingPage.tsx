@@ -4,6 +4,7 @@ import { useLoaderData } from 'react-router-dom';
 
 import { LoaderFunctionArgs } from 'react-router-dom';
 import Article from 'types/Article';
+import CommentsSection from 'features/articles/landing/comments/CommentsSection';
 
 export async function loader({ params }: LoaderFunctionArgs): Promise<Article> {
   const { id } = params;
@@ -52,6 +53,7 @@ const ArticleLandingPage = () => {
         <div className="authorship"></div>
       </div>
 
+      <CommentsSection articleId={id} comments={comments} />
     </div>
   );
 };
