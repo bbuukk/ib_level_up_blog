@@ -10,6 +10,9 @@ import AuthProvider from 'features/authentication/contexts/AuthProvider';
 import ProtectedRoute from 'features/authentication/ProtectedRoute';
 import ErrorPage from 'routes/ErrorElement';
 import ArticlesPage from 'routes/ArticlesPage';
+import ArticleLandingPage, {
+  loader as landingArticleLoader
+} from 'routes/ArticleLandingPage';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +34,11 @@ const router = createBrowserRouter([
           {
             path: '/articles',
             element: <ArticlesPage />
+          },
+          {
+            path: '/articles/:id',
+            element: <ArticleLandingPage />,
+            loader: landingArticleLoader
           },
           {
             path: '/profile',
