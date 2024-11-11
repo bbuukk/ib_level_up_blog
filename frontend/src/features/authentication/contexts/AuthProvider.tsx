@@ -41,7 +41,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   // Fetch the user on mount, so we determine if the user is logged in
-  useEffect(() => {
+  /*   useEffect(() => {
     const fetchMe = async () => {
       try {
         const data = await getMe();
@@ -55,7 +55,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     fetchMe();
-  }, []);
+  }, []); */
 
   const logout = () => {
     const sendLogoutRequest = async () => {

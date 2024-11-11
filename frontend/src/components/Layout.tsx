@@ -3,13 +3,15 @@ import { useAuth } from 'features/authentication/contexts/AuthProvider';
 import { Link, Outlet } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
 import LoginFormModal from 'features/authentication/LoginFormModal';
+import useLogout from 'features/authentication/server/useLogoutNew';
 
 interface NavigationBarProps {
   openLoginModal: () => void;
 }
 
 const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
-  const { logout } = useAuth();
+  //const { logout } = useAuth();
+  const logout = useLogout();
 
   return (
     <header className="header">
@@ -33,6 +35,11 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
             <li>
               <Link to="/basic-react-query" className="nav__link">
                 Basics RQ
+              </Link>
+            </li>
+            <li>
+              <Link to="/profile" className="nav__link">
+                Profile
               </Link>
             </li>
             <li>

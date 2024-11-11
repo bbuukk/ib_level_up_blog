@@ -18,11 +18,25 @@ import ArticleLandingPage, {
   loader as landingArticleLoader
 } from 'routes/ArticleLandingPage';
 import { notifications, Notifications } from '@mantine/notifications';
+import loaderArticles from 'features/articles/server/loaderArticles';
+import loaderMe from 'features/authentication/server/loaderMe';
+
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error, query) =>
+      notifications.show({
+        title: 'Error',
+        message: `Something went wrong: ${error.message}`,
+        color: 'red'
+      })
+  })
+});
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     errorElement: <ErrorPage />,
+    loader: loaderMe(queryClient),
     children: [
       {
         errorElement: <ErrorPage />,
@@ -38,7 +52,8 @@ const router = createBrowserRouter([
           },
           {
             path: '/articles',
-            element: <ArticlesPage />
+            element: <ArticlesPage />,
+            loader: loaderArticles(queryClient)
           },
           {
             path: '/articles/:id',
@@ -58,17 +73,6 @@ const router = createBrowserRouter([
     ]
   }
 ]);
-
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error, query) =>
-      notifications.show({
-        title: 'Error',
-        message: `Something went wrong: ${error.message}`,
-        color: 'red'
-      })
-  })
-});
 
 function App() {
   return (

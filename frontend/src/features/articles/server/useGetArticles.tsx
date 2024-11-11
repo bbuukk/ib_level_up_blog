@@ -1,12 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import { getArticles } from 'utils/axios';
 import SearchParams from '../types/SearchParams';
 
-const useGetArticles = (searchParams: SearchParams) => {
-  const { data, isLoading, error } = useQuery({
+export const buildQueryOptions = (searchParams: SearchParams) => {
+  return queryOptions({
     queryKey: ['articles', searchParams],
-    queryFn: () => getArticles(searchParams)
+    queryFn: () => getArticles(searchParams),
+    staleTime: 1000 * 20
   });
+};
+
+const useGetArticles = (searchParams: SearchParams) => {
+  const { data, isLoading, error } = useQuery(buildQueryOptions(searchParams));
 
   // We could go like this, but we'd endup with duplicated notifications
   /*   useEffect(() => {

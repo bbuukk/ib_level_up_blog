@@ -3,6 +3,7 @@ import {
   useAuth
 } from 'features/authentication/contexts/AuthProvider';
 import './Root.scss';
+import useNewAuth from 'features/authentication/server/useNewAuth';
 
 import Article from 'types/ApiArticle';
 
@@ -26,7 +27,8 @@ interface ArticleResponse {
 }
 
 const Root = () => {
-  const { isAuthorized } = useAuth();
+  //const { isAuthorized } = useAuth();
+  const isAuthorized = useNewAuth();
 
   const articlesResponse = useLoaderData() as ArticleResponse;
 

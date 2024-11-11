@@ -1,13 +1,15 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { IsAuthorizedRequestStatus, useAuth } from './contexts/AuthProvider';
 import { ReactNode } from 'react';
+import useNewAuth from './server/useNewAuth';
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isAuthorized } = useAuth();
+  //const { isAuthorized } = useAuth();
+  const isAuthorized = useNewAuth();
   const location = useLocation();
 
   console.log('isAuthorized', isAuthorized);

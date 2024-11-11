@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { Button, Modal, TextInput } from '@mantine/core';
 import { useAuth } from './contexts/AuthProvider';
 import { useState } from 'react';
+import useLogin from './server/useLogin';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -26,15 +27,23 @@ const LoginFormModal = ({ isOpen, closeModal }: LoginFormModalProps) => {
     validate: zodResolver(formSchema)
   });
 
-  const { login } = useAuth();
+  //const { login } = useAuth();
+  const { mutate } = useLogin();
 
   const handleSubmit = async (values: LoginForm) => {
     setIsSubmitting(true);
-    await login(values);
+    /*     await login(values);
     console.log('handleSubmit from LoginFormModal - login already called');
 
     setIsSubmitting(false);
-    closeModal();
+    closeModal(); */
+
+    mutate(values, {
+      onSettled: () => {
+        setIsSubmitting(false);
+        closeModal();
+      }
+    });
   };
 
   return (
