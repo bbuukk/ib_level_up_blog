@@ -1,13 +1,13 @@
 .header {
-  position: fixed;
+  position: sticky;
   top: 0;
-  width: 100%;
+  width: 100vw;
   padding: 20px 0;
   background-color: rgba(black, 0.5);
   z-index: 100;
   backdrop-filter: blur(5px);
 
-  @include media($mobile){
+  @include media($mobile) {
     padding: 14px 0;
   }
 }
@@ -25,7 +25,7 @@
   font-weight: bold;
   text-transform: uppercase;
 
-  @include media($mobile){
+  @include media($mobile) {
     font-size: 20px;
   }
 
@@ -41,7 +41,7 @@
   list-style: none;
   gap: 30px;
 
-  @include media($mobile){
+  @include media($mobile) {
     position: fixed;
     top: 58px;
     left: 0;
@@ -63,16 +63,16 @@
   font-family: $serif;
   transition: 300ms;
 
-  @include media($mobile){
+  @include media($mobile) {
     transform: translate(40px);
     display: inline-block;
     opacity: 0;
   }
-  
+
   &:hover {
     color: $primary;
   }
-} 
+}
 
 .nav__toggle {
   position: relative;
@@ -82,12 +82,13 @@
   overflow: hidden;
   cursor: pointer;
 
-  @include media($mobile){
+  @include media($mobile) {
     display: block;
   }
 }
 
-.nav__open, .nav__close {
+.nav__open,
+.nav__close {
   max-width: 100%;
   height: auto;
   position: absolute;
@@ -105,13 +106,15 @@
 }
 
 .nav--active {
-  .nav__list, .nav__link {
+
+  .nav__list,
+  .nav__link {
     transform: translateX(0);
     opacity: 1;
   }
 
   .nav__link {
-    @include media($mobile){ 
+    @include media($mobile) {
       transition-delay: 300ms;
     }
   }
