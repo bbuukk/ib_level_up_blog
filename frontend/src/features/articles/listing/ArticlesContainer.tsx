@@ -12,7 +12,7 @@ const ArticlesContainer = () => {
     page: 1
   });
 
-  const { data } = useGetArticles(searchParams);
+  const { data, isLoading, error } = useGetArticles(searchParams);
 
   const searchKeyWordForm = useForm<{ searchKeyword: string }>({
     initialValues: {
@@ -81,7 +81,7 @@ const ArticlesContainer = () => {
             </div>
           </div>
 
-          <ArticlesList searchParams={searchParams} />
+          <ArticlesList data={data} isLoading={isLoading} error={error} />
 
           <nav className="pagination">
             <ul className="pagination__list">

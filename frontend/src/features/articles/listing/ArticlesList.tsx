@@ -1,19 +1,19 @@
 import './style.scss';
 
 import ArticleCard from './ArticleCard';
-
 import ApiArticle from 'types/ApiArticle';
 
-import useGetArticles from '../server/useGetArticles';
-import SearchParams from '../types/SearchParams';
-
 interface ArticlesListProps {
-  searchParams: SearchParams;
+  data:
+    | {
+        data: ApiArticle[];
+      }
+    | undefined;
+  isLoading: boolean;
+  error: unknown;
 }
 
-const ArticlesList = ({ searchParams }: ArticlesListProps) => {
-  const { data, isLoading, error } = useGetArticles(searchParams);
-
+const ArticlesList = ({ data, isLoading, error }: ArticlesListProps) => {
   if (isLoading) {
     return <div>Loading...</div>;
   }

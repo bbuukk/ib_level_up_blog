@@ -3,6 +3,7 @@ import useGetMe from './useGetMe';
 
 const useNewAuth = () => {
   const { data, error } = useGetMe();
+  console.log(error);
 
   if (error) {
     return IsAuthorizedRequestStatus.NOT_AUTHORIZED;

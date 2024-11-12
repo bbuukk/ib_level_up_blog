@@ -1,5 +1,6 @@
 import axios from 'axios';
 import SearchParams from 'features/articles/types/SearchParams';
+import ApiUserArticlesRequestParams from 'features/profile/types/ApiUserArticlesRequestParams';
 import ApiLoginResponse from 'features/authentication/types/ApiLoginResponse';
 import LoginForm from 'features/authentication/types/LoginForm';
 import ApiArticle from 'types/ApiArticle';
@@ -34,6 +35,8 @@ export const login = async (data: LoginForm) => {
     url: '/api/login',
     data
   });
+
+  console.log(response.data);
 
   return response.data;
 };
@@ -80,6 +83,22 @@ export const createArticle = async (data: CreateArticleFormData) => {
     method: 'POST',
     url: '/api/articles',
     data
+  });
+
+  return response.data;
+};
+
+//TODO!: reuse getArticles better
+export const getUserArticles = async (
+  searchParams: ApiUserArticlesRequestParams
+) => {
+  const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
+    method: 'GET',
+    url: '/api/articles',
+    params: {
+      ...searchParams,
+      perPage: PAGE_SIZE
+    }
   });
 
   return response.data;

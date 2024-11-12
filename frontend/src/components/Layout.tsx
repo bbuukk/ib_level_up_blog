@@ -65,7 +65,7 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
 };
 
 const Container = ({ children }: { children: React.ReactNode }) => {
-  return <div className="container mx-auto p-4">{children}</div>;
+  return <div className="container mx-auto p-4 pt-0">{children}</div>;
 };
 
 const Layout = () => {

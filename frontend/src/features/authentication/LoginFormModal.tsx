@@ -37,6 +37,8 @@ const LoginFormModal = ({ isOpen, closeModal }: LoginFormModalProps) => {
     setIsSubmitting(false);
     closeModal(); */
 
+    console.log(values);
+
     mutate(values, {
       onSettled: () => {
         setIsSubmitting(false);

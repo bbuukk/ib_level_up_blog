@@ -16,8 +16,6 @@ h6 {
 }
 
 main {
-  margin-top: 68px;
-
   @include media($mobile) {
     margin-top: 58px;
   }

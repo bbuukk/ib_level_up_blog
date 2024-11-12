@@ -6,10 +6,9 @@ import { storeComment } from 'utils/axios';
 import Comment from 'types/ApiComment';
 
 import React, { useState } from 'react';
-import {
-  IsAuthorizedRequestStatus,
-  useAuth
-} from 'features/authentication/contexts/AuthProvider';
+
+import IsAuthorizedRequestStatus from 'features/authentication/types/IsAuthorizedRequestStatus';
+import useNewAuth from 'features/authentication/server/useNewAuth';
 
 const schema = z.object({
   commentContent: z
@@ -26,7 +25,7 @@ interface CommentFormProps {
 }
 
 const CommentForm = ({ articleId, setComments }: CommentFormProps) => {
-  const { isAuthorized } = useAuth();
+  const isAuthorized = useNewAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormValues>({

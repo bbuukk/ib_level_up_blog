@@ -10,7 +10,6 @@ import BasicReactQuery from 'routes/BasicReactQuery';
 import Root, { articlesLoader } from 'routes/Root';
 import Layout from './Layout';
 import { MantineProvider } from '@mantine/core';
-import AuthProvider from 'features/authentication/contexts/AuthProvider';
 import ProtectedRoute from 'features/authentication/ProtectedRoute';
 import ErrorPage from 'routes/ErrorElement';
 import ArticlesPage from 'routes/ArticlesPage';
@@ -87,10 +86,8 @@ function App() {
       <MantineProvider forceColorScheme="dark">
         <Notifications />
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <RouterProvider router={router} />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </AuthProvider>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </MantineProvider>
     </StrictMode>
