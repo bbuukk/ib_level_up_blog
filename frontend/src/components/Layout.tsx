@@ -33,8 +33,8 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
               </Link>
             </li>
             <li>
-              <Link to="/basic-react-query" className="nav__link">
-                Basics RQ
+              <Link to="/profile" className="nav__link">
+                Profile
               </Link>
             </li>
             <li>

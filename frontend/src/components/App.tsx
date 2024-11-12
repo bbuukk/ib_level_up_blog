@@ -20,6 +20,7 @@ import ArticleLandingPage, {
 import { notifications, Notifications } from '@mantine/notifications';
 import loaderArticles from 'features/articles/server/loaderArticles';
 import loaderMe from 'features/authentication/server/loaderMe';
+import ProfilePage from 'routes/ProfilePage';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -64,7 +65,7 @@ const router = createBrowserRouter([
             path: '/profile',
             element: (
               <ProtectedRoute>
-                <h1 className="mt-16">Profile</h1>
+                <ProfilePage />
               </ProtectedRoute>
             )
           }
