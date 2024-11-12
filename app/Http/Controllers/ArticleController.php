@@ -98,9 +98,10 @@ class ArticleController
     {
         $title = $request->validated('title');
         $content = $request->validated('content');
+        $coverPhoto = $request->file('cover');
         $author = Auth::user();
 
-        $this->articleService->store($title, $content, $author);
+        $this->articleService->store($title, $content, $author, $coverPhoto);
 
         return response(status: 201);
     }

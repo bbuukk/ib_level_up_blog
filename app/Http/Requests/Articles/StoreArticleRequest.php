@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Articles;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\File;
 
 class StoreArticleRequest extends FormRequest
 {
@@ -23,7 +24,8 @@ class StoreArticleRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string'],
-            'content' => ['required', 'string']
+            'content' => ['required', 'string'],
+            'cover' => ['sometimes', File::image()->max('10mb')],
         ];
     }
 }

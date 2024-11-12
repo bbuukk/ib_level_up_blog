@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+
 use App\Models\Tag;
 use App\Models\Article;
 use App\Models\Comment;
@@ -52,17 +56,30 @@ class ArticleService
         return $query->with('author');
     }
 
-
     public function store(
         string $title,
         string $content,
-        User $author
+        User $author,
+        ?UploadedFile $coverPhoto
+
     ): bool {
         $article = new Article;
 
         $article->title = $title;
         $article->content = $content;
         $article->author()->associate($author);
+
+        if (!is_null($coverPhoto)) {
+            $coverUrl = Storage::disk('public')
+                ->putFileAs(
+                    'covers',
+                    $coverPhoto,
+                    $article->id . $coverPhoto->getClientOriginalExtension()
+                );
+            $relativeUrl = Storage::url($coverUrl);
+            $article->cover_url = $relativeUrl;
+            $article->save();
+        }
 
         return $article->save();
     }
