@@ -1,7 +1,4 @@
-import {
-  IsAuthorizedRequestStatus,
-  useAuth
-} from 'features/authentication/contexts/AuthProvider';
+import { IsAuthorizedRequestStatus } from 'features/authentication/contexts/AuthProvider';
 import './Root.scss';
 import useNewAuth from 'features/authentication/server/useNewAuth';
 
@@ -27,7 +24,6 @@ interface ArticleResponse {
 }
 
 const Root = () => {
-  //const { isAuthorized } = useAuth();
   const isAuthorized = useNewAuth();
 
   const articlesResponse = useLoaderData() as ArticleResponse;

@@ -1,16 +1,14 @@
 import { Button } from '@mantine/core';
-import { useAuth } from 'features/authentication/contexts/AuthProvider';
 import { Link, Outlet } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
 import LoginFormModal from 'features/authentication/LoginFormModal';
-import useLogout from 'features/authentication/server/useLogoutNew';
+import useLogout from 'features/authentication/server/useLogout';
 
 interface NavigationBarProps {
   openLoginModal: () => void;
 }
 
 const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
-  //const { logout } = useAuth();
   const logout = useLogout();
 
   return (

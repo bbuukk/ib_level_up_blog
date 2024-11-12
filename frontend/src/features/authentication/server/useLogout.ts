@@ -8,7 +8,7 @@ const useLogout = () => {
     localStorage.removeItem('token');
 
     queryClient.invalidateQueries({
-      queryKey: ['me'] /* buildQueryOptions().queryKey */
+      queryKey: buildQueryOptions().queryKey
     });
   };
 

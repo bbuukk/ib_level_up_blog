@@ -21,15 +21,21 @@ import { notifications, Notifications } from '@mantine/notifications';
 import loaderArticles from 'features/articles/server/loaderArticles';
 import loaderMe from 'features/authentication/server/loaderMe';
 import ProfilePage from 'routes/ProfilePage';
+import { isAxiosError } from 'axios';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error, query) =>
+    onError: (error) => {
+      if (isAxiosError(error) && error.response?.status === 401) {
+        // We don't want to show error notification if user is not logged in
+        return;
+      }
       notifications.show({
         title: 'Error',
         message: `Something went wrong: ${error.message}`,
         color: 'red'
-      })
+      });
+    }
   })
 });
 
