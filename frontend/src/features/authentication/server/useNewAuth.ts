@@ -1,7 +1,7 @@
-import { IsAuthorizedRequestStatus } from '../contexts/AuthProvider';
+import IsAuthorizedRequestStatus from '../types/IsAuthorizedRequestStatus';
 import useGetMe from './useGetMe';
 
-const useNewAuth = (): IsAuthorizedRequestStatus => {
+const useNewAuth = () => {
   const { data, error } = useGetMe();
 
   if (error) {

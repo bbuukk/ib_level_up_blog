@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { IsAuthorizedRequestStatus, useAuth } from './contexts/AuthProvider';
 import { ReactNode } from 'react';
 import useNewAuth from './server/useNewAuth';
+import IsAuthorizedRequestStatus from './types/IsAuthorizedRequestStatus';
 
 interface ProtectedRouteProps {
   children: ReactNode;

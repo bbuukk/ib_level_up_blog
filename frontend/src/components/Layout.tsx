@@ -36,11 +36,6 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
               </Link>
             </li>
             <li>
-              <Link to="/profile" className="nav__link">
-                Profile
-              </Link>
-            </li>
-            <li>
               <Button variant="filled" color="green" onClick={openLoginModal}>
                 Sign In
               </Button>

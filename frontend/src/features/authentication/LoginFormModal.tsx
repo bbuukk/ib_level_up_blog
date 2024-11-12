@@ -2,7 +2,6 @@ import { useForm, zodResolver } from '@mantine/form';
 import LoginForm from './types/LoginForm';
 import { z } from 'zod';
 import { Button, Modal, TextInput } from '@mantine/core';
-import { useAuth } from './contexts/AuthProvider';
 import { useState } from 'react';
 import useLogin from './server/useLogin';
 

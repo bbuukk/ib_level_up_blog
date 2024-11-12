@@ -1,4 +1,4 @@
-import { IsAuthorizedRequestStatus } from 'features/authentication/contexts/AuthProvider';
+import IsAuthorizedRequestStatus from 'features/authentication/types/IsAuthorizedRequestStatus';
 import './Root.scss';
 import useNewAuth from 'features/authentication/server/useNewAuth';
 
