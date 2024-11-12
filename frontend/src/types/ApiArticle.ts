@@ -10,6 +10,7 @@ interface ApiArticle {
   author_id: number;
   author?: User;
   comments?: Comment[];
+  cover?: File | null;
 }
 
 export default ApiArticle;
