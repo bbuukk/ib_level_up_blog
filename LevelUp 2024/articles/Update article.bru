@@ -4,15 +4,26 @@ meta {
   seq: 9
 }
 
-put {
-  url: http://localhost:8000/api/articles/1
-  body: json
+post {
+  url: http://localhost:8000/api/articles/15
+  body: multipartForm
   auth: none
+}
+
+headers {
+  Authorization: Bearer 1|wgTv2efaPzxrOCPtklcJtwxbaBF7Pv477VjFEBDF06bac31b
 }
 
 body:json {
   {
-  "title" :  "changed"
+  "title" :  "changed",
   "content" : "changed"
   }
+}
+
+body:multipart-form {
+  cover: @file(/home/bchk/Downloads/MainBefore.jpg)
+  title: hello
+  content: mur
+  _method: put
 }

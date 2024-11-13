@@ -6,8 +6,12 @@ meta {
 
 post {
   url: http://localhost:8000/api/articles
-  body: json
+  body: multipartForm
   auth: none
+}
+
+headers {
+  Authorization: Bearer 1|wgTv2efaPzxrOCPtklcJtwxbaBF7Pv477VjFEBDF06bac31b
 }
 
 body:json {
@@ -15,4 +19,10 @@ body:json {
       "title": "test title",
       "content": "this is test article content"
   }
+}
+
+body:multipart-form {
+  cover: @file(/home/bchk/Downloads/sudilkovsky-1856064716856086705[twitter].jpg)
+  title: 10
+  content: some contnet
 }
