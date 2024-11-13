@@ -10,13 +10,14 @@ use App\Models\Tag;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\User;
-
+use App\Traits\ManipulateFilesInPublicStorage;
 use App\Traits\SortByDirectModelAttribute;
 use Carbon\Carbon;
 
 class ArticleService
 {
     use SortByDirectModelAttribute;
+    use ManipulateFilesInPublicStorage;
 
     public function listAllArticles(
         array $sort,
@@ -61,7 +62,6 @@ class ArticleService
         string $content,
         User $author,
         ?UploadedFile $coverPhoto
-
     ): bool {
         $article = new Article;
 
@@ -70,15 +70,8 @@ class ArticleService
         $article->author()->associate($author);
 
         if (!is_null($coverPhoto)) {
-            $coverUrl = Storage::disk('public')
-                ->putFileAs(
-                    'covers',
-                    $coverPhoto,
-                    $article->id . $coverPhoto->getClientOriginalExtension()
-                );
-            $relativeUrl = Storage::url($coverUrl);
+            $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
             $article->cover_url = $relativeUrl;
-            $article->save();
         }
 
         return $article->save();
@@ -114,6 +107,40 @@ class ArticleService
         return $query;
     }
 
+    public function update(
+        Article $article,
+        ?string $title,
+        ?string $content,
+        ?string $coverUrl
+    ) {
+        $title && $article->title = $title;
+        $content && $article->content = $content;
+
+        $article->cover_url = $coverUrl;
+
+        $article->save();
+    }
+
+    public function updateCoverInStorage(Article $article, $coverPhoto)
+    {
+        $oldCoverPhotoUrl = $article->cover_url;
+        if (!is_null($oldCoverPhotoUrl)) {
+            $this->deleteFileFromPublicStorage($oldCoverPhotoUrl);
+        }
+
+        $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
+        return $relativeUrl;
+    }
+
+    public function deleteCoverInStorage(Article $article)
+    {
+        $oldCoverPhotoUrl = $article->cover_url;
+        if (!is_null($oldCoverPhotoUrl)) {
+            $this->deleteFileFromPublicStorage($oldCoverPhotoUrl);
+        }
+    }
+
+
     public function addComment(Article $article, string $commentContent, User $author)
     {
         $comment = new Comment;
@@ -126,7 +153,13 @@ class ArticleService
 
     public function destroy(Article $article)
     {
+        $coverUrl = $article->cover_url;
+        if (!is_null($coverUrl)) {
+            $this->deleteFileFromPublicStorage($coverUrl);
+        }
 
+
+        //TODO: remove, make comments cascade when articles is deleted
         $article->comments()->delete();
         $article->delete();
     }

@@ -21,7 +21,7 @@ class Article extends Model
     protected $fillable = [
         'title',
         'content',
-        // Add other fields that you want to be fillable
+        'cover_url'
     ];
 
     public function resolveRouteBinding($value, $field = null)

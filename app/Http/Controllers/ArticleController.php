@@ -21,7 +21,7 @@ use App\Services\TagService;
 use Carbon\Carbon;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Log;
 
 class ArticleController
 {
@@ -118,14 +118,28 @@ class ArticleController
 
     public function update(Article $article, UpdateArticleRequest $request)
     {
-        $newArticle = $request->validated();
-
         $user = Auth::user();
         if ($article->author_id !== $user->id) {
             abort(403, 'Forbidden. Please authorize as the article author to make changes.');
         }
 
-        $article->update($newArticle);
+        $newTitle = $request->validated('title');
+        $newContent = $request->validated('content');
+        $newCoverUrl = $article->cover_url;
+
+        if ($request->hasFile('cover')) { // new cover file
+
+            Log::info("file ");
+            $coverPhoto = $request->file('cover');
+            $newCoverUrl = $this->articleService->updateCoverInStorage($article, $coverPhoto);
+        } elseif ($request->has('cover')) { //cover is set to null explicitly
+            Log::info("set ot null");
+            $this->articleService->deleteCoverInStorage($article);
+            $newCoverUrl = null;
+        }
+        //else no action needed, cover was not specified in params
+
+        $this->articleService->update($article, $newTitle, $newContent, $newCoverUrl);
 
         return response()->json($article, '200');
     }
