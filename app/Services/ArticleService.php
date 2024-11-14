@@ -10,13 +10,14 @@ use App\Models\Tag;
 use App\Models\Article;
 use App\Models\Comment;
 use App\Models\User;
-
+use App\Traits\ManipulateFilesInPublicStorage;
 use App\Traits\SortByDirectModelAttribute;
 use Carbon\Carbon;
 
 class ArticleService
 {
     use SortByDirectModelAttribute;
+    use ManipulateFilesInPublicStorage;
 
     public function listAllArticles(
         array $sort,
@@ -61,7 +62,6 @@ class ArticleService
         string $content,
         User $author,
         ?UploadedFile $coverPhoto
-
     ): bool {
         $article = new Article;
 
@@ -70,15 +70,8 @@ class ArticleService
         $article->author()->associate($author);
 
         if (!is_null($coverPhoto)) {
-            $coverUrl = Storage::disk('public')
-                ->putFileAs(
-                    'covers',
-                    $coverPhoto,
-                    $article->id . $coverPhoto->getClientOriginalExtension()
-                );
-            $relativeUrl = Storage::url($coverUrl);
+            $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
             $article->cover_url = $relativeUrl;
-            $article->save();
         }
 
         return $article->save();
