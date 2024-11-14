@@ -12,4 +12,16 @@ trait ManipulateFilesInPublicStorage
         return Storage::disk($disk)->url($filePath);
     }
 
+    protected function deleteFileFromPublicStorage($fileUrl, $disk = 'public')
+    {
+        if ($fileUrl) {
+            $filePath = $this->getFilePathFromUrl($fileUrl);
+            Storage::disk($disk)->delete($filePath);
+        }
+    }
+
+    private function getFilePathFromUrl($url)
+    {
+        return str_replace('/storage/', '', parse_url($url, PHP_URL_PATH));
+    }
 }

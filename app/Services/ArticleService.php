@@ -107,6 +107,40 @@ class ArticleService
         return $query;
     }
 
+    public function update(
+        Article $article,
+        ?string $title,
+        ?string $content,
+        ?string $coverUrl
+    ) {
+        $title && $article->title = $title;
+        $content && $article->content = $content;
+
+        $article->cover_url = $coverUrl;
+
+        $article->save();
+    }
+
+    public function updateCoverInStorage(Article $article, $coverPhoto)
+    {
+        $oldCoverPhotoUrl = $article->cover_url;
+        if (!is_null($oldCoverPhotoUrl)) {
+            $this->deleteFileFromPublicStorage($oldCoverPhotoUrl);
+        }
+
+        $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
+        return $relativeUrl;
+    }
+
+    public function deleteCoverInStorage(Article $article)
+    {
+        $oldCoverPhotoUrl = $article->cover_url;
+        if (!is_null($oldCoverPhotoUrl)) {
+            $this->deleteFileFromPublicStorage($oldCoverPhotoUrl);
+        }
+    }
+
+
     public function addComment(Article $article, string $commentContent, User $author)
     {
         $comment = new Comment;
@@ -119,7 +153,13 @@ class ArticleService
 
     public function destroy(Article $article)
     {
+        $coverUrl = $article->cover_url;
+        if (!is_null($coverUrl)) {
+            $this->deleteFileFromPublicStorage($coverUrl);
+        }
 
+
+        //TODO: remove, make comments cascade when articles is deleted
         $article->comments()->delete();
         $article->delete();
     }
