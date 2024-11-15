@@ -48,4 +48,74 @@ class UserService
         return $query;
     }
 
+    //TODO?: Use salting and peppering
+    public function store(
+        string $name,
+        string $email,
+        string $password,
+        ?UploadedFile $avatarPhoto
+    ): User {
+
+        $avatarUrl = null;
+        if (!is_null($avatarPhoto)) {
+            $avatarUrl = $this->storeFileInPublicStorage($avatarPhoto, 'avatars');
+        }
+
+        return User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'avatar_url' => $avatarUrl
+        ]);
+    }
+
+    public function update(
+        User $user,
+        ?string $name,
+        ?string $email,
+        ?string $avatarUrl
+    ) {
+        if ($name) {
+            $user->name = $name;
+        }
+
+        if ($email) {
+            $user->email = $email;
+            $user->email_verified_at = null;
+            //TODO?: send verification link to new email
+        }
+
+        $user->avatar_url = $avatarUrl;
+
+        $user->save();
+    }
+
+    public function updateAvatarInStorage(User $user, $avatarPhoto)
+    {
+        $oldAvatarPhotoUrl = $user->avatar_url;
+        if (!is_null($oldAvatarPhotoUrl)) {
+            $this->deleteFileFromPublicStorage($oldAvatarPhotoUrl);
+        }
+
+        $url = $this->storeFileInPublicStorage($avatarPhoto, 'avatars');
+        return $url;
+    }
+
+    public function deleteAvatarInStorage(User $user)
+    {
+        $oldAvatarPhotoUrl = $user->avatar_url;
+        if (!is_null($oldAvatarPhotoUrl)) {
+            $this->deleteFileFromPublicStorage($oldAvatarPhotoUrl);
+        }
+    }
+
+    public function destroy(User $user)
+    {
+        $avatarUrl = $user->avatar_url;
+        if (!is_null($avatarUrl)) {
+            $this->deleteFileFromPublicStorage($avatarUrl);
+        }
+
+        $user->delete();
+    }
 }
