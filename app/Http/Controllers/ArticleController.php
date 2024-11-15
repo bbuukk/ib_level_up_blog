@@ -157,14 +157,12 @@ class ArticleController
     public function getArticlesByTag(IndexArticleRequest $request, Tag $tag)
     {
         $data = $request->validated();
-        ['perPage' => $perPage, 'sort' => $sort, 'cursor' => $cursor] = $data;
+        ['page' => $page, 'perPage' => $perPage, 'sort' => $sort] = $data;
 
         $query = $this->articleService->listAllArticlesByTag($tag, $sort);
 
         return $query
-            // fallback unique column for cursor pagination
-            ->orderBy('id', 'desc')
-            ->cursorPaginate(perPage: $perPage, cursor: $cursor)
+            ->paginate(page: $page, perPage: $perPage)
             ->withQueryString();
     }
 

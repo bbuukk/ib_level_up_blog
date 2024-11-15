@@ -8,25 +8,27 @@ use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ArticleIndexByTag extends TestCase
+class ArticleIndexByTagTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_list_all_comments_of_article(): void
+    public function test_list_article_that_have_the_tag()
     {
-        $tag = Tag::factory()->createOne();
+        $tag = Tag::factory()->create();
 
+        // Create some articles with the tag
         Article::factory()
-            ->count(10)
+            ->count(5)
             ->hasAttached($tag)
             ->create();
 
-        $response = $this->get(
-            "/api/articles/tags/{$tag->id}"
-        );
+        // Create some articles without the tag
+        Article::factory()->count(3)->create();
 
-        $response
-            ->assertStatus(200)
+        $response = $this->getJson("/api/articles/tags/{$tag->id}?page=1&perPage=10");
+
+        // Assert the response
+        $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
@@ -35,12 +37,20 @@ class ArticleIndexByTag extends TestCase
                         'content',
                         'created_at',
                         'updated_at',
+                        'cover_url',
                         'author'
                     ]
                 ],
-                'next_cursor',
-                'prev_cursor'
+                'links',
             ])
-            ->assertJsonCount(10, 'data');
+            ->assertJsonCount(5, 'data')
+            ->assertJsonPath('total', 5);
+
+        // Check if all returned articles have the correct tag
+        $responseData = $response->json('data');
+
+        foreach ($responseData as $article) {
+            $this->assertTrue(in_array($tag->id, Article::find($article['id'])->tags->pluck('id')->toArray()));
+        }
     }
 }
