@@ -1,0 +1,20 @@
+meta {
+  name: Create user
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8000/api/users
+  body: multipartForm
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Bohdan",
+    "email": "bohdanbuchok@gmail.com",
+    "password": "8959TruE",
+    "password_confirmation": "8959TruE"
+  }
+}

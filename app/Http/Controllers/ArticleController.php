@@ -58,6 +58,7 @@ class ArticleController
     {
         $article->load([
             'author',
+            //TODO?: should comments be paginated?
             'comments' => function ($query) {
                 $query->orderBy('created_at', 'desc')->with('author');
             },
@@ -130,6 +131,7 @@ class ArticleController
 
             $coverPhoto = $request->file('cover');
             $newCoverUrl = $this->articleService->updateCoverInStorage($article, $coverPhoto);
+            //TODO: fix comment, it is not null, it is arbitary value, but not a file
         } elseif ($request->has('cover')) { //cover is set to null explicitly
 
             $this->articleService->deleteCoverInStorage($article);
@@ -154,6 +156,7 @@ class ArticleController
         return response()->json($article, '204');
     }
 
+    //TODO: fix, does not return cursorPaginate anymore, paginate instead
     public function getArticlesByTag(IndexArticleRequest $request, Tag $tag)
     {
         $data = $request->validated();

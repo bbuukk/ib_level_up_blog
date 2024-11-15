@@ -62,7 +62,7 @@ class ArticleService
         string $content,
         User $author,
         ?UploadedFile $coverPhoto
-    ): bool {
+    ): bool { //TODO: fix return type
         $article = new Article;
 
         $article->title = $title;
@@ -70,6 +70,7 @@ class ArticleService
         $article->author()->associate($author);
 
         if (!is_null($coverPhoto)) {
+            //TODO: fix var name, it is not relativeUrl
             $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
             $article->cover_url = $relativeUrl;
         }
@@ -128,6 +129,7 @@ class ArticleService
             $this->deleteFileFromPublicStorage($oldCoverPhotoUrl);
         }
 
+        //TODO: fix, it is not relative url
         $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
         return $relativeUrl;
     }
@@ -139,7 +141,6 @@ class ArticleService
             $this->deleteFileFromPublicStorage($oldCoverPhotoUrl);
         }
     }
-
 
     public function addComment(Article $article, string $commentContent, User $author)
     {
@@ -158,8 +159,7 @@ class ArticleService
             $this->deleteFileFromPublicStorage($coverUrl);
         }
 
-
-        //TODO: remove, make comments cascade when articles is deleted
+        //TODO: remove, make comments cascade when articles gets deleted
         $article->comments()->delete();
         $article->delete();
     }

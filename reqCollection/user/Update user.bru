@@ -1,0 +1,22 @@
+meta {
+  name: Update user
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:8000/api/users/5
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  Authorization: Bearer 1|qQh6I6758E4AMzC96GFUOGbdiTDWyu2dyXT9Q0B9baad4fc4
+}
+
+body:multipart-form {
+  name: DR PHD MOHAMED
+  avatar: @file(/home/bchk/Downloads/sudilkovsky-1856064716856086705[twitter].jpg)
+  _method: put
+  ~email: phdohamed@gmail.com
+}

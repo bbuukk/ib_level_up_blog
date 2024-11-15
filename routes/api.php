@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TagController;
@@ -13,23 +14,30 @@ use Illuminate\Support\Facades\Auth;
  * Users
  */
 
-Route::get('/users', function () {
-    $users = User::query()->get();
-    return $users;
-});
-Route::get('/users/{userId}', function (int $userId) {
-    return User::query()->findOrFail($userId);
-});
-
 Route::get('/me', function () {
-    return auth()->user();
-})->middleware(['auth:api']);
+    return Auth::user();
+})->middleware(['auth:sanctum']);
+
+Route::group(["prefix" => "users"], function () {
+
+    Route::get('/', [UserController::class, 'index']);
+    Route::get('/{user}', [UserController::class, 'show']);
+
+    Route::post('/', [UserController::class, 'store']);
+
+    Route::group(['middleware' => ['auth:sanctum']], function () {
+
+        Route::put('/{user}', [UserController::class, 'update']);
+        Route::delete('/{user}', [UserController::class, 'destroy']);
+    });
+});
 
 Route::post('/login', function (Request $request) {
     $email = $request->get('email');
     $password = $request->get('password');
 
     $user = User::query()->where('email', $email)->first();
+    //TODO: check if $user is present, if not abort
 
     if (!Hash::check($password, $user->password)) {
         throw new Exception('invalid password');
@@ -42,11 +50,6 @@ Route::post('/login', function (Request $request) {
         'token' => $token->plainTextToken
     ];
 });
-
-
-Route::get('/me', function () {
-    return Auth::user();
-})->middleware(['auth:sanctum']);
 
 /**
  * Articles
