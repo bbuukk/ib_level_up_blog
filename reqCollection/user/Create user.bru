@@ -1,0 +1,28 @@
+meta {
+  name: Create user
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8000/api/users
+  body: multipartForm
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Bohdan",
+    "email": "bohdanbuchok@gmail.com",
+    "password": "8959TruE",
+    "password_confirmation": "8959TruE"
+  }
+}
+
+body:multipart-form {
+  name: helllo
+  email: he1llo@gmail.com
+  password: PasS1234
+  password_confirmation: PasS1234
+  avatar: @file(/home/bchk/Downloads/MainBefore.jpg)
+}
