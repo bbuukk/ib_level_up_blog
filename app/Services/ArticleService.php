@@ -62,7 +62,7 @@ class ArticleService
         string $content,
         User $author,
         ?UploadedFile $coverPhoto
-    ): bool {
+    ): Article {
         $article = new Article;
 
         $article->title = $title;
@@ -70,11 +70,13 @@ class ArticleService
         $article->author()->associate($author);
 
         if (!is_null($coverPhoto)) {
-            $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
-            $article->cover_url = $relativeUrl;
+            $coverUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
+            $article->cover_url = $coverUrl;
         }
 
-        return $article->save();
+        $article->save();
+
+        return $article;
     }
 
     public function findArticleById(int $articleId): ?Article

@@ -58,6 +58,7 @@ class ArticleController
     {
         $article->load([
             'author',
+            //TODO?: should comments be paginated?
             'comments' => function ($query) {
                 $query->orderBy('created_at', 'desc')->with('author');
             },
@@ -100,9 +101,9 @@ class ArticleController
         $coverPhoto = $request->file('cover');
         $author = Auth::user();
 
-        $this->articleService->store($title, $content, $author, $coverPhoto);
+        $article = $this->articleService->store($title, $content, $author, $coverPhoto);
 
-        return response(status: 201);
+        return response()->json($article, '201');
     }
 
     public function addComment(Article $article, StoreCommentRequest $request)
@@ -130,7 +131,7 @@ class ArticleController
 
             $coverPhoto = $request->file('cover');
             $newCoverUrl = $this->articleService->updateCoverInStorage($article, $coverPhoto);
-        } elseif ($request->has('cover')) { //cover is set to null explicitly
+        } elseif ($request->has('cover')) { //cover is set to  empty value explicitly
 
             $this->articleService->deleteCoverInStorage($article);
             $newCoverUrl = null;
