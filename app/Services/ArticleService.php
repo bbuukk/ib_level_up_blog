@@ -160,9 +160,6 @@ class ArticleService
             $this->deleteFileFromPublicStorage($coverUrl);
         }
 
-
-        //TODO: remove, make comments cascade when articles is deleted
-        $article->comments()->delete();
         $article->delete();
     }
 }

@@ -152,7 +152,7 @@ class ArticleController
 
         $this->articleService->destroy($article);
 
-        return response()->json($article, '204');
+        return response(status: '204');
     }
 
     public function getArticlesByTag(IndexArticleRequest $request, Tag $tag)
