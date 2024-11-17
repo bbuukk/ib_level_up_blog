@@ -11,6 +11,7 @@ import { notifications, Notifications } from '@mantine/notifications';
 import { isAxiosError } from 'axios';
 
 import getRouteObjects from 'routes/getRouteObjects';
+import { customMantineTheme } from 'utils/mantineConfig';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -33,7 +34,7 @@ const router = createBrowserRouter(getRouteObjects(queryClient));
 function App() {
   return (
     <StrictMode>
-      <MantineProvider forceColorScheme="dark">
+      <MantineProvider theme={customMantineTheme} forceColorScheme="dark">
         <Notifications />
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
