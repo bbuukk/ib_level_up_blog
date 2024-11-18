@@ -1,6 +1,5 @@
 {
-  "name": "reactjs-vite-tailwindcss-boilerplate",
-  "description": "This is a boilerplate build with Vite, React 18, TypeScript, Vitest, Testing Library, TailwindCSS 3, Eslint and Prettier.",
+  "name": "levelup-2024-frontend",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,8 +8,8 @@
     "dev-container": "vite --host",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "test": "vitest",
-    "test:run": "vitest run",
+    "test": "vitest run --coverage",
+    "test:update": "pnpm test --update",
     "test:ui": "vitest --ui",
     "lint": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
     "typecheck": "tsc --project tsconfig.json --noEmit"

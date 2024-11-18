@@ -1,9 +1,22 @@
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import ApiUser from 'types/ApiUser';
+import { getMe } from 'utils/axios';
 
 const Counter = () => {
   const [count, setCount] = useState(0);
   const [inputValue, setInputValue] = useState('');
+
+  const [me, setMe] = useState<null | ApiUser>(null);
+
+  // Just to test module mocking
+  useEffect(() => {
+    const fetchMe = async () => {
+      const response = await getMe();
+      console.log(response);
+      setMe(response);
+    };
+    fetchMe();
+  }, []);
 
   return (
     <main className="p-4">

@@ -9,6 +9,22 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: 'src/tests/setup'
+    setupFiles: 'src/tests/setup',
+    coverage: {
+      provider: 'istanbul',
+      reporter: ['text', 'html'],
+      exclude: ['src/tests'], // We don't need to cover the utils files for tests, like the wrapper
+      include: ['src/**/*.{js,jsx,ts,tsx}'],
+      clean: false,
+      cleanOnRerun: false,
+      thresholds: {
+        global: {
+          statements: 90,
+          branches: 90,
+          functions: 90,
+          lines: 90
+        }
+      }
+    }
   }
 });

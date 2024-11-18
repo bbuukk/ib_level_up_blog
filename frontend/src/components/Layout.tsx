@@ -1,8 +1,10 @@
-import { Button } from '@mantine/core';
+import { Button, Loader } from '@mantine/core';
 import { Link, Outlet } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
 import LoginFormModal from 'features/authentication/LoginFormModal';
 import useLogout from 'features/authentication/server/useLogout';
+import useNewAuth from 'features/authentication/server/useNewAuth';
+import IsAuthorizedRequestStatus from 'features/authentication/types/IsAuthorizedRequestStatus';
 
 interface NavigationBarProps {
   openLoginModal: () => void;
@@ -15,8 +17,41 @@ const LINKS = [
   { to: '/playground', label: 'Playground' }
 ] as const;
 
+interface AuthorizationButtonsProps {
+  isAuthorizedStatus: IsAuthorizedRequestStatus;
+  loginCb: () => void;
+  logoutCb: () => void;
+}
+
+const AuthorizationButtons = ({
+  isAuthorizedStatus,
+  loginCb,
+  logoutCb
+}: AuthorizationButtonsProps) => {
+  if (isAuthorizedStatus === IsAuthorizedRequestStatus.UNKNOWN) {
+    return <Loader size="xs" aria-label="loader authorized status" />;
+  }
+
+  return (
+    <>
+      {isAuthorizedStatus === IsAuthorizedRequestStatus.NOT_AUTHORIZED && (
+        <Button variant="outline" onClick={loginCb}>
+          Sign In
+        </Button>
+      )}
+      {isAuthorizedStatus === IsAuthorizedRequestStatus.AUTHORIZED && (
+        <Button variant="outline" onClick={logoutCb}>
+          Log Out
+        </Button>
+      )}
+    </>
+  );
+};
+
 const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
   const logout = useLogout();
+
+  const isAuthorizedStatus = useNewAuth();
 
   return (
     <header className="header">
@@ -34,16 +69,11 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
                 </Link>
               </li>
             ))}
-            <li>
-              <Button variant="filled" color="green" onClick={openLoginModal}>
-                Sign In
-              </Button>
-            </li>
-            <li>
-              <Button variant="filled" color="red" onClick={logout}>
-                Log out
-              </Button>
-            </li>
+            <AuthorizationButtons
+              isAuthorizedStatus={isAuthorizedStatus}
+              logoutCb={logout}
+              loginCb={openLoginModal}
+            />
           </ul>
           <div className="nav__toggle nav__toggle--active">
             <img

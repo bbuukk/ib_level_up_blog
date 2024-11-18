@@ -4,7 +4,31 @@ import userEvent from '@testing-library/user-event';
 import Counter from './ExampleCounter';
 import { renderRoute } from 'tests/wrappers';
 
+vi.mock('utils/axios', () => ({
+  getMe: vi.fn().mockResolvedValue({
+    id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    email_verified_at: null,
+    created_at: '2023-01-01T00:00:00Z',
+    updated_at: '2023-01-01T00:00:00Z'
+  })
+}));
+import { getMe } from 'utils/axios';
+
 describe('Counter', () => {
+  beforeEach(() => {
+    vi.resetAllMocks(); // Reset all mocks before each test, so tests are isolated
+  });
+
+  it.only('renders correctly', () => {
+    const conatiner = render(<Counter />);
+    expect(conatiner).toMatchSnapshot();
+  });
+  it.only('calls getMe on mount', async () => {
+    render(<Counter />);
+    await waitFor(() => expect(getMe).toHaveBeenCalled());
+  });
   it('renders initial count and increments when button is clicked', () => {
     render(<Counter />);
 
