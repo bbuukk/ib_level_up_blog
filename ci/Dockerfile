@@ -1,6 +1,7 @@
 
 # Start from an image somebody prepared as being good for testing PHP
 FROM ike-docker-local.artifactory.internetbrands.com/ib/php-testing:8.3
+RUN dnf install php-gd -y
 
 # Also install Postgres driver because this is what we use on pipeline
 RUN /build/php --version=8.3 php-pgsql
