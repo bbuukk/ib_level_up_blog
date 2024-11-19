@@ -5,8 +5,7 @@ def createTestingEnvironment() {
     return setupContainers([
         [
             'name': 'main',
-            // WARNING: rename this to follow $username-testing-image
-            'image': 'ike-docker-local.artifactory.internetbrands.com/corp/levelup-academy:main-repo-testing-image',
+            'image': 'ike-docker-local.artifactory.internetbrands.com/corp/levelup-academy:bbuchok-testing-image',
             'imagePullPolicy': 'Always',
             'env': [
                 ['name': 'DB_HOST',       'value': 'localhost'],
@@ -50,6 +49,7 @@ def createTestingEnvironment() {
 pipeline {
     agent { kubernetes { yaml dockerContainerImageBuildAndPushPodManifest() } }
 
+
     options {
         gitLabConnection('IB Gitlab')
     }
@@ -68,13 +68,16 @@ pipeline {
                         'docker_repo_credential_id': 'artifactory-ike',
                         'dockerfile': './ci/Dockerfile',
                         'docker_image_name': 'levelup-academy',
-                        'docker_image_tag': 'main-repo-testing-image' // WARNING: rename this to follow $username-testing-image
+                        'docker_image_tag': 'bbuchok-testing-image'
                     ])
                 }
             }
         }
 
         stage('Run backend tests') {
+            when {
+                not { changeRequest() }
+            }
             agent {
                 kubernetes {
                     yaml createTestingEnvironment()
@@ -91,6 +94,26 @@ pipeline {
             steps {
                 container('main') {
                     sh 'cd /var/www/html && php artisan test --env=testing'
+                }
+            }
+        }
+
+        stage('Check MR conditions') {
+            when {
+                 changeRequest()
+            }
+            steps {
+                script {
+                    def commitAuthors = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().tokenize('\n')
+                    def invalidAuthors = commitAuthors.findAll { !it.endsWith('@internetbrands.com') }
+                    if (invalidAuthors) {
+                        error("Invalid commit authors: ${invalidAuthors.join(', ')}")
+                    }
+
+                    def branchName = env.GITLAB_SOURCE_BRANCH
+                    if (!branchName.matches("^(fix|feat|chore|docs|style|refactor|perf|test|build)/.*")) {
+                        error("Branch name '${branchName}' does not follow the conventional commits naming pattern.")
+                    }
                 }
             }
         }
