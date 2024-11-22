@@ -21,6 +21,8 @@ import loaderArticles from 'features/articles/server/loaderArticles';
 import loaderMe from 'features/authentication/server/loaderMe';
 import ProfilePage from 'routes/ProfilePage';
 import { isAxiosError } from 'axios';
+import ProfileEditPage from 'routes/ProfileEditPage';
+import EditArticlePage from 'routes/EditArticlePage';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -67,10 +69,25 @@ const router = createBrowserRouter([
             loader: landingArticleLoader
           },
           {
+            path: '/edit-article/:id?',
+            element: <EditArticlePage />
+          },
+          {
+            // About data fetching and mutations: You should use React Query (RQ) for your queries and mutations, and add React Router’s (RR) data loaders to the pages and connect them to RQ.
+            // TODO!: introduce loader for user articles
             path: '/profile',
             element: (
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            )
+            // loader: loaderArticles(queryClient, userId)
+          },
+          {
+            path: '/profile/edit',
+            element: (
+              <ProtectedRoute>
+                <ProfileEditPage />
               </ProtectedRoute>
             )
           }

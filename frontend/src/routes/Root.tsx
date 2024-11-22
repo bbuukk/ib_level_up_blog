@@ -161,46 +161,6 @@ const Root = () => {
           </ul>
         </article>
       </footer>
-      <div className="modal">
-        <div className="modal__container">
-          <div className="modal__heading">
-            <h4>Modal text</h4>
-            <div className="modal__close">
-              <img
-                src="/src/assets/images/close-modal-icon.svg"
-                alt="Menu icon"
-              />
-            </div>
-          </div>
-          <div className="modal__content">
-            <form action="" className="form--simple">
-              <div className="inputBox">
-                <label htmlFor="">Label</label>
-                <input type="text" placeholder="Placeholder" />
-                <p>Error</p>
-              </div>
-              <div className="inputBox">
-                <label htmlFor="">Label</label>
-                <input type="text" placeholder="Placeholder" />
-                <p>Error</p>
-              </div>
-              <div className="inputBox">
-                <label htmlFor="">Label</label>
-                <input type="text" placeholder="Placeholder" />
-                <p>Error</p>
-              </div>
-              <div className="inputBox">
-                <label htmlFor="">Label</label>
-                <input type="text" placeholder="Placeholder" />
-                <p>Error</p>
-              </div>
-              <div className="form__buttonBox">
-                <button className="button">Action</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
     </>
   );
 };

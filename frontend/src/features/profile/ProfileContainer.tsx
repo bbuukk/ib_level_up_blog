@@ -1,12 +1,14 @@
 import useGetMe from 'features/authentication/server/useGetMe';
 import './ProfileContainer.scss';
-import ProfileHero from './ProfileHero';
 import ArticlesList from 'features/articles/listing/ArticlesList';
 import { useState } from 'react';
 import useGetUserArticles from './server/useGetUserArticles';
 import ApiUserAriticlesRequestParams from './types/ApiUserArticlesRequestParams';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@mantine/core';
 
 const ProfileContainer = () => {
+  const navigate = useNavigate();
   //TODO: isLoading!
   const { data: userDetails, error: userDetailsErr } = useGetMe();
 
@@ -47,12 +49,48 @@ const ProfileContainer = () => {
     return 'todo';
   }
 
+  const defaultAvatarUrl = 'https://picsum.photos/200/200';
   return (
     <main>
-      <ProfileHero {...userDetails} />
+      <section className="profileHero">
+        <div className="container--profileHero">
+          <div className="profileHero__left">
+            <h1>
+              Welcome, <span>{userDetails?.name}</span>
+            </h1>
+            <ul>
+              <li>
+                <a href="/profile/edit">{`Edit profile -> `}</a>
+              </li>
+              <li>
+                <a href="">{`Edit subscription -> `}</a>
+              </li>
+            </ul>
+          </div>
+          <div className="profileHeroImage">
+            <img
+              className="profileHeroImage__image"
+              src={userDetails?.avatar_url ?? defaultAvatarUrl}
+              alt="user avatar"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* <Button onClick={() => navigate('articles/edit')}>Create new post</Button> */}
+
       {/* TODO: make this compoennt reusable, use in articlesPage and here*/}
+
+      <button
+        className="button--primary mt-10"
+        onClick={() => navigate('/edit-article')}
+      >
+        Create new post
+      </button>
+
       <div className="articlesListSort">
         <p>
+          {/* TODO!: to is wrong here!*/}
           Showing <span>{data?.to}</span> / <span>{data?.total}</span>
         </p>
         <div>
@@ -68,11 +106,11 @@ const ProfileContainer = () => {
           </select>
         </div>
       </div>
-      <section className="articlesPageList">
-        <ArticlesList data={data} isLoading={isLoading} error={error} />
-      </section>
+
+      <ArticlesList data={data} isLoading={isLoading} error={error} />
 
       {/* TODO!: make this compoennt reusable, use in articlesPage and here*/}
+
       {/* TODO?: if there is only one page of articles. should pagination be loaded?*/}
       <nav className="pagination">
         <ul className="pagination__list">

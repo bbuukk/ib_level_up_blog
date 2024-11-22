@@ -1,6 +1,9 @@
 import axios from 'axios';
 import SearchParams from 'features/articles/types/SearchParams';
 import ApiUserArticlesRequestParams from 'features/profile/types/ApiUserArticlesRequestParams';
+import ApiUpdateUserRequestParams from 'types/ApiUpdateUserRequestParams';
+import ApiArticleRequestParams from 'types/ApiArticleRequestParams';
+
 import ApiLoginResponse from 'features/authentication/types/ApiLoginResponse';
 import LoginForm from 'features/authentication/types/LoginForm';
 import ApiArticle from 'types/ApiArticle';
@@ -9,6 +12,7 @@ import ApiUser from 'types/ApiUser';
 import Comment from 'types/ApiComment';
 import CreateArticleFormData from 'types/CreateArticvleFormData';
 import { PAGE_SIZE } from './constants';
+import { transformObjectToFormData } from './transformObjectToFormData';
 
 export const axiosBaseConfig = {
   baseURL: import.meta.env.VITE_SERVER_URL,
@@ -99,6 +103,87 @@ export const getUserArticles = async (
       ...searchParams,
       perPage: PAGE_SIZE
     }
+  });
+
+  return response.data;
+};
+
+export const updateUser = async (params: ApiUpdateUserRequestParams) => {
+  const formData = transformObjectToFormData(params);
+
+  formData.append('_method', 'put');
+
+  const response = await axiosInstance({
+    method: 'POST',
+    url: `/api/users/${params.id}`,
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+
+  return response.data;
+};
+
+export const deleteUser = async (userId: number) => {
+  const response = await axiosInstance({
+    method: 'DELETE',
+    url: `/api/users/${userId}`
+  });
+
+  return response.data;
+};
+
+type ApiArticleRequestParamsWithoutId = Omit<ApiArticleRequestParams, 'id'>;
+export const storeArticle = async (
+  params: ApiArticleRequestParamsWithoutId
+) => {
+  const formData = transformObjectToFormData(params);
+
+  const response = await axiosInstance({
+    method: 'POST',
+    url: `/api/articles`,
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+
+  console.log(response.data);
+
+  return response.data;
+};
+
+export const updateArticle = async (params: ApiArticleRequestParams) => {
+  const formData = transformObjectToFormData(params);
+
+  formData.append('_method', 'put');
+
+  const response = await axiosInstance({
+    method: 'POST',
+    url: `/api/articles/${params.id}`,
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+
+  return response.data;
+};
+
+export const deleteArticle = async (articleId: number) => {
+  const response = await axiosInstance({
+    method: 'DELETE',
+    url: `/api/articles/${articleId}`
+  });
+
+  return response.data;
+};
+
+export const getArticleById = async (articleId: number) => {
+  const response = await axiosInstance<ApiArticle>({
+    method: 'GET',
+    url: `/api/articles/${articleId}`
   });
 
   return response.data;

@@ -7,6 +7,7 @@ export const buildQueryOptions = (params: Params) => {
     queryKey: ['user-articles', params],
     queryFn: () => getUserArticles(params)
     // staleTime: 1000 * 20
+    //TODO?: introduce stale time?
   });
 };
 

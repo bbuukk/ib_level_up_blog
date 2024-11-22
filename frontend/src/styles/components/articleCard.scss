@@ -15,7 +15,7 @@
     }
   }
 
-  @include media($mobileSmall){
+  @include media($mobileSmall) {
     display: block;
   }
 }
@@ -25,7 +25,7 @@
   position: relative;
   overflow: hidden;
 
-  @include media($mobileSmall){
+  @include media($mobileSmall) {
     min-height: 160px;
   }
 
@@ -42,4 +42,31 @@
 .articleCard__body {
   padding: 20px;
   flex: 2;
+}
+
+.articleCard__EditLink {
+  position: absolute;
+  bottom: 16px;
+  left: 20px;
+
+  width: 25px;
+  height: 25px;
+  background: white;
+
+  color: $primary;
+
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 2;
+
+  font-size: 0.8rem;
+
+  transition: transform 0.25s ease;
+  &:hover {
+    transform: scale(1.3);
+  }
 }

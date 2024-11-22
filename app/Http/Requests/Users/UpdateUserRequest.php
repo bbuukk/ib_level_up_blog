@@ -4,6 +4,7 @@ namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\File;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -26,6 +27,7 @@ class UpdateUserRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:100'],
             'email' => ['sometimes', 'required', 'string', 'email', 'max:100', 'unique:users'],
             'avatar' => ['sometimes', 'nullable', File::image()->max('10mb')],
+            'password' => ['sometimes', 'string', 'confirmed', Password::defaults()],
         ];
     }
 }

@@ -1,13 +1,17 @@
 meta {
   name: Create user
   type: http
-  seq: 5
+  seq: 6
 }
 
 post {
   url: http://localhost:8000/api/users
   body: multipartForm
   auth: none
+}
+
+headers {
+  : 
 }
 
 body:json {
