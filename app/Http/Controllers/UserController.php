@@ -63,6 +63,7 @@ class UserController
 
         $newName = $request->validated('name');
         $newEmail = $request->validated('email');
+        $newPassword = $request->validated('password');
         $newAvatarUrl = $user->avatar_url;
 
         if ($request->hasFile('avatar')) { // new avatar file
@@ -74,7 +75,7 @@ class UserController
         }
         //else no action needed, as avatar was not specified in params
 
-        $this->userService->update($user, $newName, $newEmail, $newAvatarUrl);
+        $this->userService->update($user, $newName, $newEmail, $newPassword, $newAvatarUrl);
 
         return response()->json($user, '200');
     }

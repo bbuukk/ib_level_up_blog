@@ -1,6 +1,8 @@
 import axios from 'axios';
 import SearchParams from 'features/articles/types/SearchParams';
 import ApiUserArticlesRequestParams from 'features/profile/types/ApiUserArticlesRequestParams';
+import ApiUpdateUserRequestParams from 'types/ApiUpdateUserRequestParams';
+
 import ApiLoginResponse from 'features/authentication/types/ApiLoginResponse';
 import LoginForm from 'features/authentication/types/LoginForm';
 import ApiArticle from 'types/ApiArticle';
@@ -99,6 +101,47 @@ export const getUserArticles = async (
       ...searchParams,
       perPage: PAGE_SIZE
     }
+  });
+
+  return response.data;
+};
+
+export const updateUser = async (params: ApiUpdateUserRequestParams) => {
+  const formData = new FormData();
+
+  console.log(params);
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (key === 'avatar') {
+      if (value instanceof File) {
+        formData.append(key, value, value.name);
+      }
+    } else {
+      if (value && value !== '') {
+        formData.append(key, String(value));
+      }
+    }
+  });
+
+  formData.append('_method', 'put');
+
+  const response = await axiosInstance({
+    method: 'POST',
+    url: `/api/users/${params.id}`,
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  console.log(response.data);
+
+  return response.data;
+};
+
+export const deleteUser = async (userId: number) => {
+  const response = await axiosInstance({
+    method: 'DELETE',
+    url: `/api/users/${userId}`
   });
 
   return response.data;

@@ -73,6 +73,7 @@ class UserService
         User $user,
         ?string $name,
         ?string $email,
+        ?string $password,
         ?string $avatarUrl
     ) {
         if ($name) {
@@ -83,6 +84,11 @@ class UserService
             $user->email = $email;
             $user->email_verified_at = null;
             //TODO?: send verification link to new email
+        }
+
+
+        if ($password) {
+            $user->password = Hash::make($password);
         }
 
         $user->avatar_url = $avatarUrl;

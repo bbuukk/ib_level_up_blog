@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const isAuthorized = useNewAuth();
   const location = useLocation();
 
-  console.log('isAuthorized', isAuthorized);
+  // console.log('isAuthorized', isAuthorized);
 
   if (isAuthorized === IsAuthorizedRequestStatus.UNKNOWN) {
     return <div>Loading...</div>;

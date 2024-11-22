@@ -21,6 +21,7 @@ import loaderArticles from 'features/articles/server/loaderArticles';
 import loaderMe from 'features/authentication/server/loaderMe';
 import ProfilePage from 'routes/ProfilePage';
 import { isAxiosError } from 'axios';
+import ProfileEditPage from 'routes/ProfileEditPage';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -71,6 +72,14 @@ const router = createBrowserRouter([
             element: (
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            )
+          },
+          {
+            path: '/profile/edit',
+            element: (
+              <ProtectedRoute>
+                <ProfileEditPage />
               </ProtectedRoute>
             )
           }
