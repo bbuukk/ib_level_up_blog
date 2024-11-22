@@ -10,6 +10,7 @@ interface DeleteProfileModalProps {
   closeModal: () => void;
 }
 
+//redefine to be danger modal
 const DeleteProfileModal = ({
   isOpen,
   closeModal

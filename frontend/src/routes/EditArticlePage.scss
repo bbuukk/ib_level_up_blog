@@ -1,0 +1,32 @@
+@import 'src/styles/index';
+
+.editArticle {}
+
+.editArticle__form {
+  padding: 50px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+
+  label {
+    color: white;
+    font-weight: bold;
+    padding: 10px 0;
+  }
+
+  input,
+  textarea {
+    background: white;
+    color: black;
+
+    &::placeholder {
+      color: black;
+    }
+  }
+
+  button.mantine-FileInput-input {
+    background: white;
+    color: black;
+  }
+}

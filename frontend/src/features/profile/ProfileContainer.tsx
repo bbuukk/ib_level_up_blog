@@ -1,12 +1,14 @@
 import useGetMe from 'features/authentication/server/useGetMe';
 import './ProfileContainer.scss';
-import ProfileHero from './ProfileHero';
 import ArticlesList from 'features/articles/listing/ArticlesList';
 import { useState } from 'react';
 import useGetUserArticles from './server/useGetUserArticles';
 import ApiUserAriticlesRequestParams from './types/ApiUserArticlesRequestParams';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@mantine/core';
 
 const ProfileContainer = () => {
+  const navigate = useNavigate();
   //TODO: isLoading!
   const { data: userDetails, error: userDetailsErr } = useGetMe();
 
@@ -74,7 +76,18 @@ const ProfileContainer = () => {
           </div>
         </div>
       </section>
+
+      {/* <Button onClick={() => navigate('articles/edit')}>Create new post</Button> */}
+
       {/* TODO: make this compoennt reusable, use in articlesPage and here*/}
+
+      <button
+        className="button--primary mt-10"
+        onClick={() => navigate('/edit-article')}
+      >
+        Create new post
+      </button>
+
       <div className="articlesListSort">
         <p>
           {/* TODO!: to is wrong here!*/}
