@@ -8,6 +8,13 @@ interface NavigationBarProps {
   openLoginModal: () => void;
 }
 
+const LINKS = [
+  { to: '/', label: 'Home' },
+  { to: '/articles', label: 'Articles' },
+  { to: '/profile', label: 'Profile' },
+  { to: '/playground', label: 'Playground' }
+] as const;
+
 const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
   const logout = useLogout();
 
@@ -20,21 +27,13 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
         {/* add ".nav--active" modifier to trigger mobile nav */}
         <nav className="nav">
           <ul className="nav__list">
-            <li>
-              <Link to="/" className="nav__link">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/articles" className="nav__link">
-                Articles
-              </Link>
-            </li>
-            <li>
-              <Link to="/profile" className="nav__link">
-                Profile
-              </Link>
-            </li>
+            {LINKS.map((link) => (
+              <li key={link.to}>
+                <Link to={link.to} className="nav__link">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
             <li>
               <Button variant="filled" color="green" onClick={openLoginModal}>
                 Sign In
