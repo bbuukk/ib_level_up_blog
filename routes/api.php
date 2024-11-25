@@ -61,13 +61,14 @@ Route::group(["prefix" => "articles"], function () {
     Route::get('/{article}/comments', [ArticleController::class, 'comments']);
     Route::get('/{article}/tags', [ArticleController::class, 'getArticleTags']);
     Route::get('/tags/{tag}', [ArticleController::class, 'getArticlesByTag']);
-
+    Route::get('/{article}/versions', [ArticleController::class, 'versions']);
 
     Route::group(['middleware' => ['auth:sanctum']], function () {
 
         Route::post('/', [ArticleController::class, 'store']);
         Route::post('/{article}/comments', [ArticleController::class, 'addComment']);
         Route::post('/{article}/tags/{tag}', [ArticleController::class, 'linkTagWithArticle']);
+        Route::post('/{article}/restore/{versionId}', [ArticleController::class, 'restore']);
 
         Route::put('/{article}', [ArticleController::class, 'update']);
 
@@ -75,6 +76,8 @@ Route::group(["prefix" => "articles"], function () {
         Route::delete('/{article}/tags/{tag}', [ArticleController::class, 'removeTagFromArticle']);
     });
 });
+
+// Route::put('/articles/{article}', [ArticleController::class, 'update']);
 
 Route::group(["prefix" => "comments", 'middleware' => ['auth:sanctum']], function () {
     Route::put('/{comment}', [CommentController::class, 'update']);

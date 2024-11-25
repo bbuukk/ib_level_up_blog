@@ -8,6 +8,8 @@ use App\Http\Requests\Articles\IndexArticleRequest;
 use App\Http\Requests\Articles\UpdateArticleRequest;
 use App\Http\Requests\Articles\StoreArticleRequest;
 
+use App\Commands\UpdateArticleCommand;
+
 use App\Http\Requests\Comments\StoreCommentRequest;
 use App\Http\Requests\Comments\IndexCommentRequest;
 
@@ -68,6 +70,7 @@ class ArticleController
         return $article;
     }
 
+
     public function comments(IndexCommentRequest $request, Article $article): CursorPaginator
     {
         $data = $request->validated();
@@ -119,7 +122,7 @@ class ArticleController
     public function update(Article $article, UpdateArticleRequest $request)
     {
         $user = Auth::user();
-        if ($article->author_id !== $user->id) {
+        if ($article->author_id !== $user?->id) {
             abort(403, 'Forbidden. Please authorize as the article author to make changes.');
         }
 
@@ -130,7 +133,7 @@ class ArticleController
         if ($request->hasFile('cover')) { // new cover file
 
             $coverPhoto = $request->file('cover');
-            $newCoverUrl = $this->articleService->updateCoverInStorage($article, $coverPhoto);
+            $newCoverUrl = $this->articleService->updateCoverInStorage($coverPhoto);
         } elseif ($request->has('cover')) { //cover is set to  empty value explicitly
 
             $this->articleService->deleteCoverInStorage($article);
@@ -139,6 +142,33 @@ class ArticleController
         //else no action needed, as cover was not specified in params
 
         $this->articleService->update($article, $newTitle, $newContent, $newCoverUrl);
+
+        return response()->json($article, '200');
+    }
+
+    public function versions(Article $article)
+    {
+        $user = Auth::user();
+        if ($article->author_id !== $user?->id) {
+            abort(403, 'Forbidden. Please authorize as the article author to view its version history.');
+        }
+
+        return response()->json($article->versions, '200');
+    }
+
+    public function restore(Article $article, $versionId)
+    {
+        $user = Auth::user();
+        if ($article->author_id !== $user?->id) {
+            abort(403, 'Forbidden. Please authorize as the article author to make changes.');
+        }
+
+        $version = $article->versions()->findOrFail($versionId);
+        if (is_null($version)) {
+            abort(404, 'The specified version does not exist for this article.');
+        }
+
+        $this->articleService->update($article, $version->title, $version->content, $version->cover_url);
 
         return response()->json($article, '200');
     }
