@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Commands\UpdateArticleCommand;
+
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -115,21 +117,14 @@ class ArticleService
         ?string $content,
         ?string $coverUrl
     ) {
-        $title && $article->title = $title;
-        $content && $article->content = $content;
-
-        $article->cover_url = $coverUrl;
-
-        $article->save();
+        $command = new UpdateArticleCommand($article, $title, $content, $coverUrl);
+        $command->execute();
     }
 
-    public function updateCoverInStorage(Article $article, $coverPhoto)
+    // for supporting versions control, old covers should not be deleted
+    // TODO: implement control disk space for it not to bloat
+    public function updateCoverInStorage($coverPhoto)
     {
-        $oldCoverPhotoUrl = $article->cover_url;
-        if (!is_null($oldCoverPhotoUrl)) {
-            $this->deleteFileFromPublicStorage($oldCoverPhotoUrl);
-        }
-
         $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
         return $relativeUrl;
     }
