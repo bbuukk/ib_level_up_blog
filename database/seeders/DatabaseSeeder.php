@@ -20,8 +20,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->cleanupOldImages();
 
-        User::factory(2)->create();
+        User::factory(4)->create();
 
+        $this->call(ArticleSeeder::class);
+        $this->call(CommentSeeder::class);
+        $this->call(TagSeeder::class);
 
         $tags = Tag::factory()
             ->count(2)
@@ -31,6 +34,7 @@ class DatabaseSeeder extends Seeder
             ))
             ->create();
 
+        //TODO: refactor
         User::factory()
             ->set('name', 'Francisco')
             ->set('email', 'francisco@internetbrands.com')
@@ -38,7 +42,6 @@ class DatabaseSeeder extends Seeder
             ->has(
                 Article::factory(8)
                     ->afterCreating(function (Article $article) use ($tags) {
-                        // Attach random tags to each article
                         $article->tags()->attach(
                             $tags->random(rand(1, 2))->pluck('id')->toArray()
                         );
@@ -46,8 +49,6 @@ class DatabaseSeeder extends Seeder
                     ->has(Comment::factory(1))
             )
             ->createOne();
-
-        $this->call(ArticleSeeder::class);
     }
 
     private function cleanupOldImages()

@@ -1,0 +1,11 @@
+.link {
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.link--primary {
+  @extend .link;
+
+  color: $primary;
+}

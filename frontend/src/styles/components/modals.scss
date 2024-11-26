@@ -1,5 +1,5 @@
 modal {
-  position:fixed;
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
@@ -25,7 +25,7 @@ modal {
   border-radius: 5px;
   box-sizing: border-box;
 
-  @include media($mobile){
+  @include media($mobile) {
     top: 0;
     right: 0;
     bottom: 0;
@@ -36,19 +36,8 @@ modal {
 }
 
 .modal__heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h4 {
-    font-size: 24px;
-    color: $primary;
-  }
-
-  img {
-    max-width: 20px;
-    cursor: pointer;
-  }
+  font-size: 24px;
+  color: $primary;
 }
 
 .modal__content {
@@ -72,10 +61,36 @@ modal {
   }
 }
 
-.modal__heading, .modal__info {
-  @include media($mobile){
+.modal__heading,
+.modal__info {
+  @include media($mobile) {
     max-width: 420px;
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+.loginModal__form {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+}
+
+.modal__switchModalAppeal {
+  display: flex;
+  justify-content: center;
+  gap: 0.2rem;
+
+  margin-top: 15px;
+
+  span {
+  }
+
+  button {
+    @extend .link--primary;
+  }
+}
+
+.modal__closeBtn {
+  color: $primary; /* Change the color of the close button to blue */
 }

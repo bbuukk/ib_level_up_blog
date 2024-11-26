@@ -12,7 +12,7 @@ import { useDisclosure } from '@mantine/hooks';
 import DeleteProfileModal from './DeleteProfileModal';
 import { updateUser } from 'utils/axios';
 
-//TODO!: fix the schema
+//TODO!: fix the schema to use refine instead of check in hadnler
 const formSchema = z.object({
   email: z
     .string()
@@ -28,19 +28,6 @@ const formSchema = z.object({
     .or(z.literal('')),
   confirmPassword: z.string().optional().or(z.literal(''))
 });
-// .refine(
-//   (data) => {
-//     //TODO!: absent validation here, refine does not work
-//     if (data.password || data.confirmPassword) {
-//       return data.password === data.confirmPassword;
-//     }
-//     return true;
-//   },
-//   {
-//     message: 'Passwords must match',
-//     path: ['confirmPassword']
-//   }
-// );
 
 const ProfileEditContainer = () => {
   const [opened, { close, open }] = useDisclosure();
@@ -61,7 +48,7 @@ const ProfileEditContainer = () => {
     validate: zodResolver(formSchema)
   });
 
-  //TODO: isLoading!
+  //TODO: use isLoading
   const { data: userDetails, error: userDetailsErr } = useGetMe();
 
   if (userDetailsErr) {
@@ -79,11 +66,11 @@ const ProfileEditContainer = () => {
       return;
     }
 
+    //TODO: create hook with mutation instead
     await updateUser({ id: userDetails!.id, ...values });
 
     form.reset();
 
-    //TODO!: should be here?
     queryClient.invalidateQueries({
       queryKey: buildQueryOptions().queryKey
     });

@@ -8,6 +8,7 @@ interface CommentProps {
   author?: User;
 }
 
+//TODO: author name should be link to their articles
 //TODO?: introduce default avatar photo (maybe just first letters of first name and second one)
 const Comment = ({ created_at, content, author }: CommentProps) => {
   const formattedCreatedAt = formatDate(created_at);
@@ -18,7 +19,7 @@ const Comment = ({ created_at, content, author }: CommentProps) => {
     <div className="comment">
       <img
         className="comment__img"
-        src={author?.avatar_url}
+        src={author?.avatar_url || '/src/assets/logo.svg'}
         alt={`avatar of ${author?.name}`}
       />
       <div className="comment__content">

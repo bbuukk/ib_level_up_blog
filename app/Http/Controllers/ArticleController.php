@@ -62,10 +62,6 @@ class ArticleController
     {
         $article->load([
             'author',
-            //TODO?: should comments be paginated?
-            'comments' => function ($query) {
-                $query->orderBy('created_at', 'desc')->with('author');
-            },
             'tags'
         ]);
 
@@ -73,17 +69,16 @@ class ArticleController
     }
 
 
-    public function comments(IndexCommentRequest $request, Article $article): CursorPaginator
+    public function comments(IndexCommentRequest $request, Article $article): LengthAwarePaginator
     {
         $data = $request->validated();
-        ['perPage' => $perPage, 'sort' => $sort, 'cursor' => $cursor] = $data;
+        ['page' => $page, 'perPage' => $perPage, 'sort' => $sort] = $data;
 
         $query = $this->articleService->getCommentsForArticle($article, $sort);
 
         return $query
             // fallback unique column for cursor pagination
-            ->orderBy('id', 'desc')
-            ->cursorPaginate(perPage: $perPage, cursor: $cursor)
+            ->paginate(page: $page, perPage: $perPage)
             ->withQueryString();
     }
 

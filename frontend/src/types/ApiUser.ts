@@ -2,10 +2,10 @@ interface ApiUser {
   id: number;
   name: string;
   email: string;
-  email_verified_at: string | null;
+  email_verified_at?: string;
   created_at: string;
   updated_at: string;
-  avatar_url: string;
+  avatar_url?: string;
 }
 
 export default ApiUser;

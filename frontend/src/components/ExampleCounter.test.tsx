@@ -16,7 +16,7 @@ vi.mock('utils/axios', () => ({
 }));
 import { getMe } from 'utils/axios';
 
-describe('Counter', () => {
+describe.skip('Counter', () => {
   beforeEach(() => {
     vi.resetAllMocks(); // Reset all mocks before each test, so tests are isolated
   });

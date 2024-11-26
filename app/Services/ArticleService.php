@@ -51,7 +51,6 @@ class ArticleService
         }
 
         $query->with(['author', 'tags']);
-        //TODO!: it sends out array of tag object, when labels are enough...
 
         return $query;
     }
@@ -127,8 +126,6 @@ class ArticleService
         $command->execute();
     }
 
-    // for supporting versions control, old covers should not be deleted
-    // TODO: implement control disk space for it not to bloat
     public function updateCoverInStorage($coverPhoto)
     {
         $relativeUrl = $this->storeFileInPublicStorage($coverPhoto, 'covers');
@@ -142,7 +139,6 @@ class ArticleService
             $this->deleteFileFromPublicStorage($oldCoverPhotoUrl);
         }
     }
-
 
     public function addComment(Article $article, string $commentContent, User $author)
     {

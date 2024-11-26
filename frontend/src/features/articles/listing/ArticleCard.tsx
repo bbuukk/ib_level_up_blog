@@ -5,13 +5,12 @@ import './style.scss';
 import { Link } from 'react-router-dom';
 import ApiArticle from 'types/ApiArticle';
 
-//TODO: fix, premium badge collapse with tags
 const ArticleCard = (articleProps: ApiArticle) => {
   const { data: user } = useGetMe();
   const { id, author, cover_url: coverUrl } = articleProps;
 
   return (
-    <a href={`/articles/${id}`} className="articleCard">
+    <Link to={`/articles/${id}`} className="articleCard">
       {true && (
         <div className="premiumFlag--articleCard">
           <img
@@ -37,7 +36,7 @@ const ArticleCard = (articleProps: ApiArticle) => {
       <div className="articleCard__body">
         <CardContent {...articleProps} />
       </div>
-    </a>
+    </Link>
   );
 };
 

@@ -1,3 +1,4 @@
+import capitalize from 'utils/capitalize';
 import './style.scss';
 
 import ApiArticle from 'types/ApiArticle';
@@ -23,7 +24,7 @@ const CardContent = ({
           //TODO!: add elipsis, if tags are more than than that...
           return (
             <div className="tag" key={`article-${title}-tag-${t.label}`}>
-              {t.label}
+              {capitalize(t.label)}
             </div>
           );
         })}

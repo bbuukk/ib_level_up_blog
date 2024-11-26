@@ -1,6 +1,7 @@
 .listTabs {
   display: flex;
-  padding: 4px;
+  padding: 6px 4px;
+
   border-radius: 40px;
   border: 1px solid $primary;
   gap: 4px;
@@ -24,6 +25,12 @@
 .button--createArticle {
   @extend .button;
   align-self: flex-start;
+}
+
+.paginationLoader {
+  margin-top: 50px;
+
+  font-weight: bold;
 }
 
 .pagination {

@@ -18,44 +18,23 @@ const articleSchema = z.object({
   cover: z.instanceof(File).or(z.null()).or(z.undefined()).optional()
 });
 
-import { queryOptions, useQuery } from '@tanstack/react-query';
-import {
-  deleteArticle,
-  getArticleById,
-  storeArticle,
-  updateArticle
-} from 'utils/axios';
-import { useEffect, useRef, useState } from 'react';
-
-export const buildQueryOptions = (articleId?: number) => {
-  return queryOptions({
-    queryKey: ['article'],
-    queryFn: () => getArticleById(articleId || 1)
-    // staleTime: 1000 * 20
-  });
-};
-
-const useGetArticleById = (articleId?: number) => {
-  const { data, isLoading, error } = useQuery(buildQueryOptions(articleId));
-
-  if (!articleId) {
-    return { data: null, isLoading: false, error: 'Invalid article ID' };
-  }
-
-  return { data, isLoading, error };
-};
+import { deleteArticle, storeArticle, updateArticle } from 'utils/axios';
+import { useEffect, useRef } from 'react';
+import useGetArticleByid from 'features/articles/landing/server/useGetArticleById';
 
 const EditArticlePage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
 
-  const articleId = id ? parseInt(id, 10) : undefined;
-  const { data: article, isLoading, error } = useGetArticleById(articleId);
+  const {
+    data: article,
+    isLoading,
+    error
+  } = useGetArticleByid(id ? parseInt(id, 10) : undefined);
 
-  //TODO!: if there is id, then it is edit, not create
-
-  const { data: userDetails } = useGetMe(); //TODO!: use error and loading states
+  //TODO!: use error and loading states
+  const { data: userDetails } = useGetMe();
 
   const form = useForm<ApiArticleRequestParamsWithoutId>({
     initialValues: {
@@ -78,7 +57,7 @@ const EditArticlePage = () => {
     }
   }, [article, isLoading, error, form]);
 
-  //mutate user articles
+  //TODO: use mutations
   const handleSubmit = async (values: ApiArticleRequestParamsWithoutId) => {
     if (id) {
       //todo: not safe? id can be anything(any string ) rework

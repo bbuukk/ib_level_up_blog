@@ -80,4 +80,7 @@ class ArticleHistoryTest extends TestCase
             'content' => 'Old Content',
         ]);
     }
+
+    //TODO: make test if version cover url gets deleted
+    //TODO: make test if version collection is capped indeed
 }

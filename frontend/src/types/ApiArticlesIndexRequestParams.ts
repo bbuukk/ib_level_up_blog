@@ -7,7 +7,6 @@ interface ApiArticlesIndexRequestParams {
     createdSinceDate?: string;
   };
   search?: string;
-
   tag?: Record<'label', string>;
 }
 

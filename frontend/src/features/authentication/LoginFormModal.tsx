@@ -13,9 +13,15 @@ const formSchema = z.object({
 interface LoginFormModalProps {
   isOpen: boolean;
   closeModal: () => void;
+  switchModal: () => void;
 }
 
-const LoginFormModal = ({ isOpen, closeModal }: LoginFormModalProps) => {
+//TODO!: all classnames should extend those form modals component
+const LoginFormModal = ({
+  isOpen,
+  closeModal,
+  switchModal
+}: LoginFormModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<LoginForm>({
@@ -26,31 +32,40 @@ const LoginFormModal = ({ isOpen, closeModal }: LoginFormModalProps) => {
     validate: zodResolver(formSchema)
   });
 
-  //const { login } = useAuth();
   const { mutate } = useLogin();
 
   const handleSubmit = async (values: LoginForm) => {
     setIsSubmitting(true);
-    /*     await login(values);
-    console.log('handleSubmit from LoginFormModal - login already called');
-
-    setIsSubmitting(false);
-    closeModal(); */
-
-    console.log(values);
 
     mutate(values, {
+      onSuccess: () => {
+        form.reset();
+        closeModal();
+      },
+      //TODO: introduce better error handling
+      onError: () => {
+        form.reset();
+        form.setFieldError('email', 'Failed to Log in. Please try again.');
+        form.setFieldError('password', 'Failed to Log in. Please try again.');
+      },
       onSettled: () => {
         setIsSubmitting(false);
-        closeModal();
       }
     });
   };
 
   return (
-    <Modal opened={isOpen} onClose={closeModal}>
-      <h1 className="mb-4 text-center text-lg font-bold">Login</h1>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+    <Modal
+      opened={isOpen}
+      onClose={closeModal}
+      className="modal"
+      title="Log in"
+      classNames={{
+        title: 'modal__heading',
+        close: 'modal__closeBtn'
+      }}
+    >
+      <form onSubmit={form.onSubmit(handleSubmit)} className="loginModal__form">
         <TextInput {...form.getInputProps('email')} label="Email" mb="sm" />
         <TextInput
           {...form.getInputProps('password')}
@@ -62,6 +77,10 @@ const LoginFormModal = ({ isOpen, closeModal }: LoginFormModalProps) => {
           Submit
         </Button>
       </form>
+      <div className="modal__switchModalAppeal">
+        <span>No account? Register</span>
+        <button onClick={switchModal}>here</button>
+      </div>
     </Modal>
   );
 };

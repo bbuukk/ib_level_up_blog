@@ -8,6 +8,7 @@
     "dev-container": "vite --host",
     "build": "tsc && vite build",
     "serve": "vite preview",
+    "test:run": "vitest run",
     "test": "vitest run --coverage",
     "test:update": "pnpm test --update",
     "test:ui": "vitest --ui",

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import CreateCommentFormData from 'types/CreateCommentFormData';
 import ApiPaginatedRequestParams from 'types/ApiPaginatedRequestParams';
 import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
 import ApiUserArticlesRequestParams from 'features/profile/types/ApiUserArticlesRequestParams';
@@ -11,11 +12,13 @@ import LoginForm from 'features/authentication/types/LoginForm';
 import ApiArticle from 'types/ApiArticle';
 import ApiPaginatedResponse from 'types/ApiPaginatedResponse';
 import ApiUser from 'types/ApiUser';
-import Comment from 'types/ApiComment';
 import CreateArticleFormData from 'types/CreateArticvleFormData';
 import { PAGE_SIZE } from './constants';
 import { transformObjectToFormData } from './transformObjectToFormData';
 import ApiTag from 'types/ApiTag';
+import ApiComment from 'types/ApiComment';
+import RegisterForm from 'features/authentication/types/RegisterForm';
+import ApiRegisterResponse from 'features/authentication/types/ApiRegisterResponse';
 
 export const axiosBaseConfig = {
   baseURL: import.meta.env.VITE_SERVER_URL,
@@ -43,7 +46,15 @@ export const login = async (data: LoginForm) => {
     data
   });
 
-  console.log(response.data);
+  return response.data;
+};
+
+export const register = async (data: RegisterForm) => {
+  const response = await axiosInstance<ApiRegisterResponse>({
+    method: 'POST',
+    url: '/api/users',
+    data
+  });
 
   return response.data;
 };
@@ -57,62 +68,24 @@ export const getMe = async () => {
   return response.data;
 };
 
-export const storeComment = async (
-  articleId: number,
-  comment: string
-): Promise<Comment> => {
+export const storeComment = async ({
+  articleId,
+  commentContent
+}: CreateCommentFormData): Promise<ApiComment> => {
   const response = await axiosInstance({
     method: 'POST',
     url: `/api/articles/${articleId}/comments`,
     data: {
-      content: comment
+      content: commentContent
     }
   });
 
   return response.data;
 };
 
-export const getArticles = async (params: ApiArticlesIndexRequestParams) => {
-  return new Promise((resolve) => {
-    setTimeout(async () => {
-      const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
-        method: 'GET',
-        url: '/api/articles',
-        params: {
-          ...params,
-          perPage: PAGE_SIZE
-        }
-      });
-      resolve(response.data);
-    }, 5000);
-  });
-};
-
-// export const getArticles = async (params: ApiArticlesIndexRequestParams) => {
-//   const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
-//     method: 'GET',
-//     url: '/api/articles',
-//     params: {
-//       ...params,
-//       perPage: PAGE_SIZE
-//     }
-//   });
-//
-//   return response.data;
-// };
-
-export const createArticle = async (data: CreateArticleFormData) => {
-  const response = await axiosInstance<CreateArticleFormData>({
-    method: 'POST',
-    url: '/api/articles',
-    data
-  });
-
-  return response.data;
-};
-
-//TODO!: reuse getArticles better
-export const getUserArticles = async (params: ApiUserArticlesRequestParams) => {
+export const getArticles = async (
+  params: ApiArticlesIndexRequestParams
+): Promise<ApiPaginatedResponse<ApiArticle>> => {
   const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
     method: 'GET',
     url: '/api/articles',
@@ -122,7 +95,7 @@ export const getUserArticles = async (params: ApiUserArticlesRequestParams) => {
     }
   });
 
-  return response.data;
+  return response.data
 };
 
 export const updateUser = async (params: ApiUpdateUserRequestParams) => {
@@ -152,6 +125,8 @@ export const deleteUser = async (userId: number) => {
 };
 
 type ApiArticleRequestParamsWithoutId = Omit<ApiArticleRequestParams, 'id'>;
+
+//TODO: use CreateArticleFormData
 export const storeArticle = async (
   params: ApiArticleRequestParamsWithoutId
 ) => {
@@ -197,10 +172,30 @@ export const deleteArticle = async (articleId: number) => {
   return response.data;
 };
 
-export const getArticleById = async (articleId: number) => {
+export const getArticleById = async (articleId?: number) => {
+  if (!articleId) {
+    return null;
+  }
+
   const response = await axiosInstance<ApiArticle>({
     method: 'GET',
     url: `/api/articles/${articleId}`
+  });
+
+  return response.data;
+};
+
+export const getArticleComments = async (
+  articleId: number,
+  params: ApiPaginatedRequestParams
+) => {
+  const response = await axiosInstance<ApiPaginatedResponse<ApiComment>>({
+    method: 'GET',
+    url: `/api/articles/${articleId}/comments`,
+    params: {
+      ...params,
+      perPage: PAGE_SIZE
+    }
   });
 
   return response.data;

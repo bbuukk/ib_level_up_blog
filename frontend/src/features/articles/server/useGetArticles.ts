@@ -2,13 +2,14 @@ import { queryOptions, useQuery } from '@tanstack/react-query';
 import { getArticles } from 'utils/axios';
 
 import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
+import { SECOND } from 'utils/constants';
 
-//TODO?: introduce dynamic stale time (set it in run)?
+//TODO?: introduce dynamic stale time?
 export const buildQueryOptions = (params: ApiArticlesIndexRequestParams) => {
   return queryOptions({
     queryKey: ['articles', params],
     queryFn: () => getArticles(params),
-    staleTime: 1000 * 20
+    staleTime: 20 * SECOND
   });
 };
 

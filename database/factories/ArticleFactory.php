@@ -4,9 +4,9 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Article>
@@ -23,16 +23,20 @@ class ArticleFactory extends Factory
     {
         $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
 
-        return [
+        $attributes = [
             'title' => $this->faker->sentence(6),
             'content' => $this->faker->text(1500),
             'author_id' => User::factory(),
-            'cover_url' => $this->generateFakeImage(),
             'created_at' => $createdAt,
             'updated_at' => $createdAt
         ];
-    }
 
+        if (Config::get('app.env', false) === 'local') {
+            $attributes['cover_url'] = $this->generateFakeImage();
+        }
+
+        return $attributes;
+    }
 
     private function generateFakeImage()
     {
@@ -60,6 +64,6 @@ class ArticleFactory extends Factory
             return Storage::disk($disk)->url($filePath);
         }
 
-        return null; // Return null or a default image path if the fetch fails
+        return null;
     }
 }

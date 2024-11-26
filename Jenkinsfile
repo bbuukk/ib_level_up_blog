@@ -98,24 +98,51 @@ pipeline {
             }
         }
 
+        stage('Run frontend tests') {
+            when {
+                not { changeRequest() }
+            }
+            agent {
+                kubernetes {
+                    yaml createTestingEnvironment()
+                }
+            }
+            post {
+                success {
+                    updateGitlabCommitStatus name: 'frontend-tests', state: 'success'
+                }
+                failure {
+                    updateGitlabCommitStatus name: 'frontend-tests', state: 'failed'
+                }
+            }
+            steps {
+                container('main') {
+                    sh 'cd /var/www/html/frontend && npm run test:run'
+                }
+            }
+        }
+
         stage('Check MR conditions') {
             when {
                  changeRequest()
             }
-            steps {
-                script {
-                    def commitAuthors = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().tokenize('\n')
-                    def invalidAuthors = commitAuthors.findAll { !it.endsWith('@internetbrands.com') }
-                    if (invalidAuthors) {
-                        error("Invalid commit authors: ${invalidAuthors.join(', ')}")
-                    }
-
-                    def branchName = env.GITLAB_SOURCE_BRANCH
-                    if (!branchName.matches("^(fix|feat|chore|docs|style|refactor|perf|test|build)/.*")) {
-                        error("Branch name '${branchName}' does not follow the conventional commits naming pattern.")
-                    }
-                }
+              steps {
+        script {
+            def commitAuthors = sh(script: 'git log --pretty=format:"%ae"', returnStdout: true).trim().tokenize('\n')
+            def validAuthors = { email ->
+                email.endsWith('@internetbrands.com') || email == 'bohdanbuchok@gmail.com'
             }
+            def invalidAuthors = commitAuthors.findAll { !validAuthors(it) }
+            if (invalidAuthors) {
+                error("Invalid commit authors: ${invalidAuthors.join(', ')}")
+            }
+
+            def branchName = env.GITLAB_SOURCE_BRANCH
+            if (!branchName.matches("^(fix|feat|chore|docs|style|refactor|perf|test|build)/.*")) {
+                error("Branch name '${branchName}' does not follow the conventional commits naming pattern.")
+            }
+        }
+    }
         }
     }
 }

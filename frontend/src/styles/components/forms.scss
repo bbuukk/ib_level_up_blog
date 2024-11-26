@@ -177,11 +177,17 @@
 
 .searchArticlesForm {
   display: flex;
-  padding: 4px 4px 4px 12px;
   border-radius: 40px;
   border: 1px solid $primary;
   gap: 4px;
+
+
+  padding: 3px;
   margin-right: 6px;
+
+  div.mantine-InputWrapper-root {
+    margin: 0 !important;
+  }
 
   @include media($tablet) {
     margin-right: 0;
@@ -193,6 +199,12 @@
     font-weight: bold;
     background-color: transparent;
     color: white;
+
+    &::placeholder {
+      color: white;
+      font-family: $serif;
+      font-weight: bold;
+    }
   }
 
   input,
@@ -204,21 +216,26 @@
     }
   }
 
-  button {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: $primary;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    outline: none;
-    transition: 300ms;
-    cursor: pointer;
-    flex-shrink: 0;
+  div.mantine-Input-section {
+    /* min-width: max-content; */
+  }
+}
 
-    &:hover {
-      background-color: darken($primary, 10%);
-    }
+.searchArticlesForm__submitBtn {
+  width: 36px;
+
+  border-radius: 100%;
+
+  background-color: $primary;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  outline: none;
+  transition: 300ms;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: darken($primary, 10%);
   }
 }

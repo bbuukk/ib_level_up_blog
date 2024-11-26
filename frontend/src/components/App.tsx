@@ -8,6 +8,7 @@ import { StrictMode } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 import { notifications, Notifications } from '@mantine/notifications';
+
 import { isAxiosError } from 'axios';
 
 import getRouteObjects from 'routes/getRouteObjects';
@@ -30,6 +31,7 @@ const queryClient = new QueryClient({
 });
 
 const router = createBrowserRouter(getRouteObjects(queryClient));
+
 
 function App() {
   return (

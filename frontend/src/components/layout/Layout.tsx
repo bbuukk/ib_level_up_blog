@@ -1,4 +1,5 @@
 import { Button, Loader } from '@mantine/core';
+import ScrollToTop from './ScrollToTop';
 import { useLocation, Link, Outlet } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
 
@@ -6,8 +7,9 @@ import LoginFormModal from 'features/authentication/LoginFormModal';
 import useLogout from 'features/authentication/server/useLogout';
 import useNewAuth from 'features/authentication/server/useNewAuth';
 import IsAuthorizedRequestStatus from 'features/authentication/types/IsAuthorizedRequestStatus';
-import Footer from './Footer';
 import PremiumBanner from './PremiumBanner';
+import Footer from './Footer';
+import RegisterFormModal from 'features/authentication/RegisterFormModal';
 
 interface NavigationBarProps {
   openLoginModal: () => void;
@@ -116,15 +118,34 @@ const Container = ({ children }: { children: React.ReactNode }) => {
 };
 
 const Layout = () => {
-  const [opened, { close, open }] = useDisclosure();
+  const [loginOpened, { close: closeLogin, open: openLogin }] = useDisclosure();
+  const [registerOpened, { close: closeRegister, open: openRegister }] =
+    useDisclosure();
 
   return (
     <div>
-      <NavigationBar openLoginModal={open} />
+      <ScrollToTop />
+      <NavigationBar openLoginModal={openLogin} />
       <Container>
-        <LoginFormModal isOpen={opened} closeModal={close} />
+        <LoginFormModal
+          isOpen={loginOpened}
+          closeModal={closeLogin}
+          switchModal={() => {
+            closeLogin();
+            openRegister();
+          }}
+        />
+        <RegisterFormModal
+          isOpen={registerOpened}
+          closeModal={closeRegister}
+          switchModal={() => {
+            closeRegister();
+            openLogin();
+          }}
+        />
         <Outlet />
       </Container>
+
       <PremiumBanner />
       <Footer />
     </div>
