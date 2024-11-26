@@ -10,7 +10,12 @@ import PlaygroundPage from './PlaygroundPage';
 import ProfilePage from './ProfilePage';
 import Root from './Root';
 
+import ArticleLandingPage, {
+  loader as landingArticleLoader
+} from 'routes/ArticleLandingPage';
+
 import ProfileEditPage from 'routes/ProfileEditPage';
+import EditArticlePage from './EditArticlePage';
 
 const getRouteObjects = (queryClient_: QueryClient) => {
   return [
@@ -34,6 +39,15 @@ const getRouteObjects = (queryClient_: QueryClient) => {
               path: '/articles',
               element: <ArticlesPage />,
               loader: loaderArticles(queryClient_)
+            },
+            {
+              path: '/articles/:id',
+              element: <ArticleLandingPage />,
+              loader: landingArticleLoader
+            },
+            {
+              path: '/edit-article/:id?',
+              element: <EditArticlePage />
             },
             {
               // About data fetching and mutations: You should use React Query (RQ) for your queries and mutations, and add React Router’s (RR) data loaders to the pages and connect them to RQ.
