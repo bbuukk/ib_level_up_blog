@@ -2,7 +2,7 @@ import './style.scss';
 
 import useGetArticles from '../server/useGetArticles';
 import ArticlesList from './ArticlesList';
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 // import SearchParams from '../types/SearchParams';
 import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
 import { useForm } from '@mantine/form';
@@ -19,6 +19,7 @@ const ArticlesContainer = () => {
       const tag: string | null = sParams.get('tag');
       return {
         page: 1,
+        // sort: { created_at: 'asc' },
         ...(tag && { tag: { label: tag } })
       };
     });
@@ -46,6 +47,16 @@ const ArticlesContainer = () => {
     setSearchParams({
       ...searchParams,
       page
+    });
+  };
+
+  type SortOrder = 'asc' | 'desc';
+  const handleSortChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const newSortOrder = event.target.value as SortOrder;
+
+    setSearchParams({
+      ...searchParams,
+      sort: { created_at: newSortOrder }
     });
   };
 
@@ -81,13 +92,22 @@ const ArticlesContainer = () => {
           </div>
           <div className="articlesListSort">
             <p>
-              Showing <span>10</span> / <span>30</span>
+              {data ? (
+                <>
+                  Showing <span>{data?.to}</span> / <span>{data.total}</span>
+                </>
+              ) : (
+                'Loading...'
+              )}
             </p>
             <div>
               <label htmlFor="sort">Sort by:</label>
-              <select name="sort" id="sort">
-                <option value="">ASC</option>
-                <option value="">DES</option>
+              <select name="sort" id="sort" onChange={handleSortChange}>
+                <option value="" disabled selected>
+                  None
+                </option>
+                <option value="asc">ASC</option>
+                <option value="desc">DESC</option>
               </select>
             </div>
           </div>

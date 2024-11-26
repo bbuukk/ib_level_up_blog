@@ -13,12 +13,14 @@
 
   object-fit: cover;
 
+  margin-top: 35px;
   border-radius: 10px;
 }
 
 .landingArticle__body {
   display: flex;
   flex: row nowrap;
+  gap: 80px;
 
   padding-bottom: 30px;
 }
@@ -76,4 +78,25 @@
 
 .landingArticle__text {
   font-size: 1.1rem;
+}
+
+.authorship {
+  padding: 20px 0;
+}
+
+.authorship__user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+
+  /* img { */
+  /**/
+  /* } */
+
+  span {
+    font-family: $lora;
+    font-size: 1rem;
+    font-weight: bold;
+  }
 }

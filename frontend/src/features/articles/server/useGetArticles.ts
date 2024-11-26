@@ -3,6 +3,7 @@ import { getArticles } from 'utils/axios';
 
 import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
 
+//TODO?: introduce dynamic stale time (set it in run)?
 export const buildQueryOptions = (params: ApiArticlesIndexRequestParams) => {
   return queryOptions({
     queryKey: ['articles', params],
@@ -14,13 +15,6 @@ export const buildQueryOptions = (params: ApiArticlesIndexRequestParams) => {
 const useGetArticles = (params: ApiArticlesIndexRequestParams) => {
   const { data, isLoading, error } = useQuery(buildQueryOptions(params));
 
-  // We could go like this, but we'd endup with duplicated notifications
-  /*   useEffect(() => {
-    if (error) {
-      console.log('Error in request');
-    }
-  }, [error]);
- */
   return { data, isLoading, error };
 };
 

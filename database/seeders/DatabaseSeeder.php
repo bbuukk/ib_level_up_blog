@@ -9,6 +9,7 @@ use App\Models\Article;
 use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,6 +18,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->cleanupOldImages();
+
         User::factory(2)->create();
 
 
@@ -33,7 +36,7 @@ class DatabaseSeeder extends Seeder
             ->set('email', 'francisco@internetbrands.com')
             ->set('password', 'test1234')
             ->has(
-                Article::factory(1)
+                Article::factory(8)
                     ->afterCreating(function (Article $article) use ($tags) {
                         // Attach random tags to each article
                         $article->tags()->attach(
@@ -45,5 +48,11 @@ class DatabaseSeeder extends Seeder
             ->createOne();
 
         $this->call(ArticleSeeder::class);
+    }
+
+    private function cleanupOldImages()
+    {
+        Storage::disk('public')->deleteDirectory('covers');
+        Storage::disk('public')->makeDirectory('covers');
     }
 }

@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import ApiPaginatedRequestParams from 'types/ApiPaginatedRequestParams';
 import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
 import ApiUserArticlesRequestParams from 'features/profile/types/ApiUserArticlesRequestParams';
 import ApiUpdateUserRequestParams from 'types/ApiUpdateUserRequestParams';
@@ -14,6 +15,7 @@ import Comment from 'types/ApiComment';
 import CreateArticleFormData from 'types/CreateArticvleFormData';
 import { PAGE_SIZE } from './constants';
 import { transformObjectToFormData } from './transformObjectToFormData';
+import ApiTag from 'types/ApiTag';
 
 export const axiosBaseConfig = {
   baseURL: import.meta.env.VITE_SERVER_URL,
@@ -71,17 +73,33 @@ export const storeComment = async (
 };
 
 export const getArticles = async (params: ApiArticlesIndexRequestParams) => {
-  const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
-    method: 'GET',
-    url: '/api/articles',
-    params: {
-      ...params,
-      perPage: PAGE_SIZE
-    }
+  return new Promise((resolve) => {
+    setTimeout(async () => {
+      const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
+        method: 'GET',
+        url: '/api/articles',
+        params: {
+          ...params,
+          perPage: PAGE_SIZE
+        }
+      });
+      resolve(response.data);
+    }, 5000);
   });
-
-  return response.data;
 };
+
+// export const getArticles = async (params: ApiArticlesIndexRequestParams) => {
+//   const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
+//     method: 'GET',
+//     url: '/api/articles',
+//     params: {
+//       ...params,
+//       perPage: PAGE_SIZE
+//     }
+//   });
+//
+//   return response.data;
+// };
 
 export const createArticle = async (data: CreateArticleFormData) => {
   const response = await axiosInstance<CreateArticleFormData>({
@@ -183,6 +201,19 @@ export const getArticleById = async (articleId: number) => {
   const response = await axiosInstance<ApiArticle>({
     method: 'GET',
     url: `/api/articles/${articleId}`
+  });
+
+  return response.data;
+};
+
+export const getTags = async (params: ApiPaginatedRequestParams) => {
+  const response = await axiosInstance<ApiPaginatedResponse<ApiTag>>({
+    method: 'GET',
+    url: '/api/tags',
+    params: {
+      ...params,
+      perPage: PAGE_SIZE
+    }
   });
 
   return response.data;

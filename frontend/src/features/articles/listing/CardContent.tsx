@@ -1,14 +1,13 @@
 import './style.scss';
 
-import User from 'types/ApiUser';
+import ApiArticle from 'types/ApiArticle';
 
-interface ArticleCardProps {
-  title: string;
-  createdAt: string;
-  author?: User;
-}
-
-const CardContent = ({ title, createdAt, author }: ArticleCardProps) => {
+const CardContent = ({
+  title,
+  created_at: createdAt,
+  author,
+  tags
+}: ApiArticle) => {
   const date = new Date(createdAt);
 
   const formattedDate = date.toLocaleDateString('en-US', {
@@ -18,11 +17,23 @@ const CardContent = ({ title, createdAt, author }: ArticleCardProps) => {
   });
 
   return (
-    <div className="cardContent--featuredCard">
-      <p className="cardContent__date">{formattedDate}</p>
-      <h3 className="cardContent__title">{title}</h3>
-      <p className="cardContent__author">{`By: ${author?.name}`}</p>
-    </div>
+    <>
+      <div className="cardContent__tags">
+        {tags?.slice(0, 2).map((t) => {
+          //TODO!: add elipsis, if tags are more than than that...
+          return (
+            <div className="tag" key={`article-${title}-tag-${t.label}`}>
+              {t.label}
+            </div>
+          );
+        })}
+      </div>
+      <div className="cardContent--featuredCard">
+        <p className="cardContent__date">{formattedDate}</p>
+        <h3 className="cardContent__title">{title}</h3>
+        <p className="cardContent__author">{`By: ${author?.name}`}</p>
+      </div>
+    </>
   );
 };
 

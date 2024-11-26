@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 
 import IsAuthorizedRequestStatus from 'features/authentication/types/IsAuthorizedRequestStatus';
 import useNewAuth from 'features/authentication/server/useNewAuth';
+import useGetMe from 'features/authentication/server/useGetMe';
 
 const schema = z.object({
   commentContent: z
@@ -24,9 +25,12 @@ interface CommentFormProps {
   setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
 }
 
+//TODO?: introduce default avatar photo (maybe just first letters of first name and second one)
 const CommentForm = ({ articleId, setComments }: CommentFormProps) => {
   const isAuthorized = useNewAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  const { data: user } = useGetMe();
 
   const form = useForm<FormValues>({
     validate: zodResolver(schema),
@@ -61,11 +65,7 @@ const CommentForm = ({ articleId, setComments }: CommentFormProps) => {
 
   return (
     <div className="comment--form">
-      <img
-        className="comment__img"
-        src="https://picsum.photos/50/50"
-        alt={`avatar`}
-      />
+      <img className="comment__img" src={user?.avatar_url} alt={`avatar`} />
       <form className="comment__form" onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
           placeholder="Add a comment..."

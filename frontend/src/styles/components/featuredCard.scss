@@ -1,10 +1,9 @@
-
 .featuredCard {
   position: relative;
   min-height: 186px;
   overflow: hidden;
 
-  @include media($mobile){
+  @include media($mobile) {
     min-height: auto;
   }
 
@@ -17,6 +16,17 @@
       opacity: 0.7;
     }
   }
+}
+
+//TODO!: delete
+.cardContent__tags {
+  display: flex;
+  gap: 10px;
+
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 3;
 }
 
 .featuredCard__image {

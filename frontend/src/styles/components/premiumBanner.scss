@@ -1,15 +1,16 @@
 .premiumBanner {
   padding: 48px 0;
-  background-image: url("/assets/images/premium-banner.jpeg");
+
+  background-image: url('/src/assets/images/premium-banner.jpeg');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
 
-  @include media($tablet){
+  @include media($tablet) {
     padding: 30px 0;
   }
 }
-  
+
 .container--premiumBanner {
   @extend .container;
   display: flex;
@@ -17,7 +18,7 @@
   align-items: center;
   gap: 30px;
 
-  @include media($tablet){
+  @include media($tablet) {
     flex-direction: column;
     text-align: center;
     gap: 18px;
@@ -28,7 +29,7 @@
   font-size: 48px;
   line-height: 1;
 
-  @include media($mobile){
+  @include media($mobile) {
     font-size: 30px;
   }
 
@@ -43,7 +44,7 @@
   color: #d5d5d5;
   font-size: 20px;
 
-  @include media($tablet){
+  @include media($tablet) {
     font-size: 16px;
   }
 }

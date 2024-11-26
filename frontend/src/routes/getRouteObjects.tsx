@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import Layout from 'components/Layout';
+import Layout from 'components/layout/Layout';
 import loaderArticles from 'features/articles/server/loaderArticles';
 import ProtectedRoute from 'features/authentication/ProtectedRoute';
 import loaderMe from 'features/authentication/server/loaderMe';
@@ -8,7 +8,7 @@ import BasicReactQuery from './BasicReactQuery';
 import ErrorPage from './ErrorElement';
 import PlaygroundPage from './PlaygroundPage';
 import ProfilePage from './ProfilePage';
-import Root from './Root';
+import Root from './root/Root';
 
 import ArticleLandingPage, {
   loader as landingArticleLoader
@@ -16,7 +16,9 @@ import ArticleLandingPage, {
 
 import ProfileEditPage from 'routes/ProfileEditPage';
 import EditArticlePage from './EditArticlePage';
+import loaderRoot from './root/loaderRoot';
 
+//TODO!: implement mobile view for all the routes
 const getRouteObjects = (queryClient_: QueryClient) => {
   return [
     {
@@ -29,7 +31,8 @@ const getRouteObjects = (queryClient_: QueryClient) => {
           children: [
             {
               path: '/',
-              element: <Root />
+              element: <Root />,
+              loader: loaderRoot(queryClient_)
             },
             {
               path: '/basic-react-query',
@@ -44,6 +47,7 @@ const getRouteObjects = (queryClient_: QueryClient) => {
               path: '/articles/:id',
               element: <ArticleLandingPage />,
               loader: landingArticleLoader
+              //Implement a connection between the RR loader and a RQ query.
             },
             {
               path: '/edit-article/:id?',

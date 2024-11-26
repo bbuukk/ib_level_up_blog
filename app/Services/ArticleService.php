@@ -50,7 +50,8 @@ class ArticleService
                 ->orWhere('content', 'ilike', "%$search%");
         }
 
-        $query->with('author');
+        $query->with(['author', 'tags']);
+        //TODO!: it sends out array of tag object, when labels are enough...
 
         return $query;
     }
