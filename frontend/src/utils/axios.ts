@@ -1,5 +1,6 @@
 import axios from 'axios';
-import SearchParams from 'features/articles/types/SearchParams';
+
+import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
 import ApiUserArticlesRequestParams from 'features/profile/types/ApiUserArticlesRequestParams';
 import ApiUpdateUserRequestParams from 'types/ApiUpdateUserRequestParams';
 import ApiArticleRequestParams from 'types/ApiArticleRequestParams';
@@ -69,12 +70,12 @@ export const storeComment = async (
   return response.data;
 };
 
-export const getArticles = async (searchParams: SearchParams) => {
+export const getArticles = async (params: ApiArticlesIndexRequestParams) => {
   const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
     method: 'GET',
     url: '/api/articles',
     params: {
-      ...searchParams,
+      ...params,
       perPage: PAGE_SIZE
     }
   });
@@ -93,14 +94,12 @@ export const createArticle = async (data: CreateArticleFormData) => {
 };
 
 //TODO!: reuse getArticles better
-export const getUserArticles = async (
-  searchParams: ApiUserArticlesRequestParams
-) => {
+export const getUserArticles = async (params: ApiUserArticlesRequestParams) => {
   const response = await axiosInstance<ApiPaginatedResponse<ApiArticle>>({
     method: 'GET',
     url: '/api/articles',
     params: {
-      ...searchParams,
+      ...params,
       perPage: PAGE_SIZE
     }
   });

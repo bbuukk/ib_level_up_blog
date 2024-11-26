@@ -4,29 +4,75 @@ import useNewAuth from 'features/authentication/server/useNewAuth';
 
 import Article from 'types/ApiArticle';
 
-import { axiosInstance } from 'utils/axios';
-import { useLoaderData } from 'react-router-dom';
-
 import FeaturedArticleCard from 'features/articles/listing/FeaturedArticleCard';
 import ArticleCard from 'features/articles/listing/ArticleCard';
 
-export async function articlesLoader() {
-  const response = await axiosInstance({
-    method: 'get',
-    url: `/api/articles/?page=1&perPage=10`
+import { queryOptions, QueryClient, useQuery } from '@tanstack/react-query';
+import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
+import { getArticles } from 'utils/axios';
+
+// const params: ApiArticlesIndexRequestParams = {
+//   page: 1,
+//   sort: { created_at: 'desc' },
+//   filter: { authorId: 5 },
+//   tag: { label: 'featured' }
+// };
+
+export const buildQueryOptions = (params: ApiArticlesIndexRequestParams) => {
+  return queryOptions({
+    queryKey: ['featured-articles', params],
+    queryFn: () => getArticles(params),
+    staleTime: 10 * 1000
   });
+};
 
-  return response.data;
-}
+export const loader = (queryClient: QueryClient) => async () => {
+  const data = await queryClient.ensureQueryData(
+    buildQueryOptions({ ...featuredArticlesQueryParams })
+  );
+  return data;
+};
 
-interface ArticleResponse {
-  data: Article[];
-}
+//TODO: introduce stale time for featured a
+const featuredArticlesQueryParams = {
+  page: 1,
+  // //TODO why does it break type system?
+  // sort: { created_at: 'desc' },
+  tag: { label: 'featured' }
+};
+
+const latestArticlesQueryParams = {
+  page: 1,
+  // //TODO why does it break type system?
+  // sort: { created_at: 'desc' },
+  tag: { label: 'featured' }
+};
+
+// interface ArticleResponse {
+//   data: Article[];
+// }
+
+// interface ArticlesListProps {
+//   data:
+//     | {
+//         data: Article[];
+//       }
+//     | undefined;
+//   isLoading: boolean;
+//   error: unknown;
+// }
 
 const Root = () => {
+  //TODO: use isLoading and error
+  const { data: featuredArticles } = useQuery(
+    buildQueryOptions(featuredArticlesQueryParams)
+  );
+
+  console.log(featuredArticles);
+
   const isAuthorized = useNewAuth();
 
-  const articlesResponse = useLoaderData() as ArticleResponse;
+  // const articlesResponse = useLoaderData() as ArticleResponse;
 
   return (
     <>
@@ -53,10 +99,10 @@ const Root = () => {
           <div className="container--featuredNews">
             <div className="featuredNews__heading">
               <h2>Featured news</h2>
-              <a href="#">All featured news</a>
+              <a href="/articles?tag=featured">All featured news</a>
             </div>
             <div className="featuredCardsList">
-              {articlesResponse?.data?.slice(0, 3).map((a) => {
+              {featuredArticles?.data?.slice(0, 3).map((a: Article) => {
                 return (
                   <FeaturedArticleCard
                     key={`article-${a.id}`}
@@ -88,17 +134,7 @@ const Root = () => {
                 </ul>
               </nav>
             </div>
-            <div className="articlesList">
-              {articlesResponse?.data?.slice(3, 9).map((a) => {
-                return (
-                  <ArticleCard
-                    key={`article-${a.id}`}
-                    createdAt={a.created_at}
-                    {...a}
-                  />
-                );
-              })}
-            </div>
+            <div className="articlesList"></div>
             <div className="latestNews__link">
               <a href="" className="button--latestNews">
                 News page
@@ -166,3 +202,13 @@ const Root = () => {
 };
 
 export default Root;
+
+// {articlesResponse?.data?.slice(3, 9).map((a) => {
+//   return (
+//     <ArticleCard
+//       key={`article-${a.id}`}
+//       createdAt={a.created_at}
+//       {...a}
+//     />
+//   );
+// })}

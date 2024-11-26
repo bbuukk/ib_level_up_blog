@@ -3,14 +3,25 @@ import './style.scss';
 import useGetArticles from '../server/useGetArticles';
 import ArticlesList from './ArticlesList';
 import { useState } from 'react';
-import SearchParams from '../types/SearchParams';
+// import SearchParams from '../types/SearchParams';
+import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
 import { useForm } from '@mantine/form';
 import { TextInput } from '@mantine/core';
 
+import { useSearchParams } from 'react-router-dom';
+
 const ArticlesContainer = () => {
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    page: 1
-  });
+  //TODO!: fix variables names
+  const [sParams, setSParams] = useSearchParams();
+
+  const [searchParams, setSearchParams] =
+    useState<ApiArticlesIndexRequestParams>(() => {
+      const tag: string | null = sParams.get('tag');
+      return {
+        page: 1,
+        ...(tag && { tag: { label: tag } })
+      };
+    });
 
   const { data, isLoading, error } = useGetArticles(searchParams);
 
