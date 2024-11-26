@@ -16,7 +16,6 @@ class IndexArticleRequest extends FormRequest
         ]);
     }
 
-
     public function rules(): array
     {
         return [
@@ -30,7 +29,11 @@ class IndexArticleRequest extends FormRequest
             'filter.authorId' => ['sometimes', 'required', 'numeric', 'exists:users,id'],
             'filter.createdSinceDate' => ['sometimes', 'required', 'date'],
 
-            'search' => ['sometimes', 'required', 'string']
+            'search' => ['sometimes', 'required', 'string'],
+
+            'tag' => ['sometimes', 'required', 'array'],
+            'tag.label' => ['sometimes', 'required', 'string', 'exists:tags,label'],
+
         ];
     }
 }

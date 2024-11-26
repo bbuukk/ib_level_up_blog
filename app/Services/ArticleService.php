@@ -26,10 +26,15 @@ class ArticleService
         ?int $authorId,
         ?Carbon $createdSince,
         ?string $search,
+        ?array $tags,
     ) {
         $query = Article::query();
 
         $query = $this->sortByDirectModelAttribute($query, $sort);
+
+        if (!empty($tags)) {
+            $query->whereHas('tags', fn($q) => $q->whereIn('label', $tags));
+        }
 
         if (!is_null($authorId)) {
             $query->where('author_id', $authorId);

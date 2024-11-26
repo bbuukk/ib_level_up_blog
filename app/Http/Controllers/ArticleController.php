@@ -8,7 +8,6 @@ use App\Http\Requests\Articles\IndexArticleRequest;
 use App\Http\Requests\Articles\UpdateArticleRequest;
 use App\Http\Requests\Articles\StoreArticleRequest;
 
-use App\Commands\UpdateArticleCommand;
 
 use App\Http\Requests\Comments\StoreCommentRequest;
 use App\Http\Requests\Comments\IndexCommentRequest;
@@ -37,17 +36,20 @@ class ArticleController
         $sort = $request->validated('sort');
 
         $authorId = $request->validated('filter.authorId');
+
         $createdSince = $request->validated('filter.createdSinceDate')
             ? Carbon::parse($request->validated('filter.createdSinceDate'))
             : null;
         $search = $request->validated('search');
 
+        $tags = $request->validated('tag');
 
         $query = $this->articleService->listAllArticles(
             $sort,
             $authorId,
             $createdSince,
             $search,
+            $tags
         );
 
         return $query

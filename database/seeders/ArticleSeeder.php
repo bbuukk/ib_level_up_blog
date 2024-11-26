@@ -17,6 +17,15 @@ class ArticleSeeder extends Seeder
      */
     public function run(): void
     {
+        $tags = Tag::factory()
+            ->count(2)
+            ->state(new Sequence(
+                ['label' => 'featured'],
+                ['label' => 'ai'],
+            ))
+            ->create();
+
+        //TODO: fix, seeder is very bloated
         User::factory()
             ->count(3)
             ->state(new Sequence(
@@ -30,9 +39,12 @@ class ArticleSeeder extends Seeder
                     ->has(
                         Comment::factory(3)
                     )
-                    ->has(
-                        Tag::factory(2)
-                    )
+                    ->afterCreating(function (Article $article) use ($tags) {
+                        // Attach random tags to each article
+                        $article->tags()->attach(
+                            $tags->random(rand(1, 2))->pluck('id')->toArray()
+                        );
+                    })
             )
             ->create();
     }
