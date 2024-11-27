@@ -2,30 +2,15 @@ import useGetMe from 'features/authentication/server/useGetMe';
 import CardContent from './CardContent';
 import './style.scss';
 
-import User from 'types/ApiUser';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import ApiArticle from 'types/ApiArticle';
 
-interface ArticleCardProps {
-  id: number;
-  title: string;
-  createdAt: string;
-  author?: User;
-}
-
-const ArticleCard = (articleProps: ArticleCardProps) => {
-  const navigate = useNavigate();
-
+const ArticleCard = (articleProps: ApiArticle) => {
   const { data: user } = useGetMe();
-  const { id, author } = articleProps;
-
-  const handleEditClick = (event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    navigate(`/edit-article/${id}`);
-  };
+  const { id, author, cover_url: coverUrl } = articleProps;
 
   return (
-    <a href={`/articles/${id}`} className="articleCard">
+    <Link to={`/articles/${id}`} className="articleCard">
       {true && (
         <div className="premiumFlag--articleCard">
           <img
@@ -36,23 +21,22 @@ const ArticleCard = (articleProps: ArticleCardProps) => {
         </div>
       )}
       {user?.id === author?.id && (
-        <button onClick={handleEditClick} className="articleCard__EditLink">
+        <Link to={`/edit-article/${id}`} className="articleCard__EditLink">
           🖊
-        </button>
+        </Link>
       )}
 
       <div className="articleCard__imgBox">
         <img
           className="featuredCard__image"
-          src="https://picsum.photos/500/380"
+          src={coverUrl}
           alt="article hero"
         />
       </div>
       <div className="articleCard__body">
-        <div className="tag--articleCard">Design</div>
         <CardContent {...articleProps} />
       </div>
-    </a>
+    </Link>
   );
 };
 

@@ -94,10 +94,34 @@
     display: flex;
     flex-direction: column;
   }
+
+  &:has(.featuredCardsList__loadingContainer) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &:has(.mantine-Loader-root) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
 }
 
 .latestNews {
   margin: 40px 0 60px;
+}
+
+.latestNews_articlesList {
+  @extend .articlesList;
+
+  /* &:has(.mantine-Loader-root) { */
+  /*   display: flex; */
+  /*   justify-content: center; */
+  /*   align-items: center; */
+  /*   min-height: 950px; */
+  /* } */
 }
 
 .container--latestNews {

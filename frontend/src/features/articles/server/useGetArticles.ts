@@ -1,25 +1,21 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { getArticles } from 'utils/axios';
-import SearchParams from '../types/SearchParams';
 
-export const buildQueryOptions = (searchParams: SearchParams) => {
+import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
+import { SECOND } from 'utils/constants';
+
+//TODO?: introduce dynamic stale time?
+export const buildQueryOptions = (params: ApiArticlesIndexRequestParams) => {
   return queryOptions({
-    queryKey: ['articles', searchParams],
-    queryFn: () => getArticles(searchParams),
-    staleTime: 1000 * 20
+    queryKey: ['articles', params],
+    queryFn: () => getArticles(params),
+    staleTime: 20 * SECOND
   });
 };
 
-const useGetArticles = (searchParams: SearchParams) => {
-  const { data, isLoading, error } = useQuery(buildQueryOptions(searchParams));
+const useGetArticles = (params: ApiArticlesIndexRequestParams) => {
+  const { data, isLoading, error } = useQuery(buildQueryOptions(params));
 
-  // We could go like this, but we'd endup with duplicated notifications
-  /*   useEffect(() => {
-    if (error) {
-      console.log('Error in request');
-    }
-  }, [error]);
- */
   return { data, isLoading, error };
 };
 

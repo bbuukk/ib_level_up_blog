@@ -8,7 +8,7 @@ import BasicReactQuery from './BasicReactQuery';
 import ErrorPage from './ErrorElement';
 import PlaygroundPage from './PlaygroundPage';
 import ProfilePage from './ProfilePage';
-import Root from './Root';
+import Root from './root/Root';
 
 import ArticleLandingPage, {
   loader as landingArticleLoader
@@ -16,7 +16,9 @@ import ArticleLandingPage, {
 
 import ProfileEditPage from 'routes/ProfileEditPage';
 import EditArticlePage from './EditArticlePage';
+import loaderRoot from './root/loaderRoot';
 
+//TODO!: implement mobile view for all the routes
 const getRouteObjects = (queryClient_: QueryClient) => {
   return [
     {
@@ -29,7 +31,8 @@ const getRouteObjects = (queryClient_: QueryClient) => {
           children: [
             {
               path: '/',
-              element: <Root />
+              element: <Root />,
+              loader: loaderRoot(queryClient_)
             },
             {
               path: '/basic-react-query',
