@@ -51,7 +51,11 @@ class UserController
 
         $user = $this->userService->store($name, $email, $password, $avatarPhoto);
 
-        //TODO?: should return token as well?
+        $token = $user->createToken('name-irrelevant');
+
+        $token->type = 'Bearer';
+        $user->token = $token;
+
         return response()->json($user, 201);
     }
 
