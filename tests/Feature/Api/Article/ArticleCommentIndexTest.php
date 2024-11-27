@@ -38,8 +38,8 @@ class ArticleCommentIndexTest extends TestCase
                         'author'
                     ]
                 ],
-                'next_cursor',
-                'prev_cursor'
+                'total',
+                'current_page'
             ])
             ->assertJsonCount($perPage, 'data')
             ->assertJson([
