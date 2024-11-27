@@ -2,25 +2,34 @@ import useGetMe from 'features/authentication/server/useGetMe';
 import './ProfileContainer.scss';
 import ArticlesList from 'features/articles/listing/ArticlesList';
 import { useState } from 'react';
-import useGetUserArticles from './server/useGetUserArticles';
-import ApiUserAriticlesRequestParams from './types/ApiUserArticlesRequestParams';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@mantine/core';
+import { Link, useNavigate } from 'react-router-dom';
+import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
+import useGetArticles from 'features/articles/server/useGetArticles';
+import SortBySelect from 'features/articles/listing/SortBySelect';
 
-const ProfileContainer = () => {
-  const navigate = useNavigate();
-  //TODO: isLoading!
-  const { data: userDetails, error: userDetailsErr } = useGetMe();
-
-  const [params, setParams] = useState<ApiUserAriticlesRequestParams>({
+export const createUserArticlesParams = (
+  id: number
+): ApiArticlesIndexRequestParams => {
+  return {
     page: 1,
     filter: {
-      authorId: userDetails?.id || 0 //TODO! fix
+      authorId: id
     },
     sort: {
       created_at: 'desc'
     }
-  });
+  };
+};
+
+const ProfileContainer = () => {
+  const navigate = useNavigate();
+
+  //TODO: use isLoading
+  const { data: userDetails, error: userDetailsErr } = useGetMe();
+
+  const [params, setParams] = useState<ApiArticlesIndexRequestParams>(
+    createUserArticlesParams(userDetails?.id as number)
+  );
 
   const handlePageChange = (page: number) => {
     setParams({
@@ -29,17 +38,8 @@ const ProfileContainer = () => {
     });
   };
 
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setParams((prevParams) => ({
-      ...prevParams,
-      sort: {
-        created_at: event.target.value as 'asc' | 'desc'
-      }
-    }));
-  };
-
-  //TODO: isLoading!
-  const { data, isLoading, error } = useGetUserArticles(params);
+  //TODO: use isLoading
+  const { data, isLoading, error } = useGetArticles(params);
 
   if (userDetailsErr) {
     return 'todo';
@@ -60,10 +60,10 @@ const ProfileContainer = () => {
             </h1>
             <ul>
               <li>
-                <a href="/profile/edit">{`Edit profile -> `}</a>
+                <Link to="/profile/edit">{`Edit profile -> `}</Link>
               </li>
               <li>
-                <a href="">{`Edit subscription -> `}</a>
+                <Link to="">{`Edit subscription -> `}</Link>
               </li>
             </ul>
           </div>
@@ -76,11 +76,6 @@ const ProfileContainer = () => {
           </div>
         </div>
       </section>
-
-      {/* <Button onClick={() => navigate('articles/edit')}>Create new post</Button> */}
-
-      {/* TODO: make this compoennt reusable, use in articlesPage and here*/}
-
       <button
         className="button--primary mt-10"
         onClick={() => navigate('/edit-article')}
@@ -88,30 +83,17 @@ const ProfileContainer = () => {
         Create new post
       </button>
 
+      {/* TODO: if there is no articles, should not be shown*/}
       <div className="articlesListSort">
         <p>
-          {/* TODO!: to is wrong here!*/}
           Showing <span>{data?.to}</span> / <span>{data?.total}</span>
         </p>
-        <div>
-          <label htmlFor="sort">Sort by:</label>
-          <select
-            name="sort"
-            id="sort"
-            value={params.sort?.created_at}
-            onChange={handleSortChange}
-          >
-            <option value="asc">Oldest</option>
-            <option value="desc">Newest</option>
-          </select>
-        </div>
+        <SortBySelect params={params} setParams={setParams} />
       </div>
 
       <ArticlesList data={data} isLoading={isLoading} error={error} />
 
-      {/* TODO!: make this compoennt reusable, use in articlesPage and here*/}
-
-      {/* TODO?: if there is only one page of articles. should pagination be loaded?*/}
+      {/* TODO: if there is only one page of articles, should not be shown*/}
       <nav className="pagination">
         <ul className="pagination__list">
           {Array.from(

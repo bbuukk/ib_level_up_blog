@@ -1,27 +1,41 @@
 import CommentComponent from './Comment';
 import CommentForm from './CommentForm';
 
-import Comment from 'types/ApiComment';
+import useGetArticleComments from '../server/useGetArticleComments';
 
-import { useState } from 'react';
+export const articleCommentsParams = {
+  page: 1,
+  sort: {
+    created_at: 'desc' as const
+  }
+};
 
 interface CommentsSectionProps {
   articleId: number;
-  comments?: Comment[];
 }
 
-const CommentsSection = ({
-  articleId,
-  comments: initialComments = []
-}: CommentsSectionProps) => {
-  const [comments, setComments] = useState(initialComments);
+//TODO: implement infinite loader on comments
+const CommentsSection = ({ articleId }: CommentsSectionProps) => {
+  const {
+    data: comments,
+    isLoading: isCommentLoading,
+    error: commentsError
+  } = useGetArticleComments(articleId, articleCommentsParams);
+
+  if (isCommentLoading) {
+    return <>Loading...</>;
+  }
+
+  if (commentsError) {
+    return <>Error...</>;
+  }
 
   return (
     <div className="comments">
       <div className="containerSmall--comments">
         <h3>Comments:</h3>
-        <CommentForm articleId={articleId} setComments={setComments} />
-        {comments?.map((c) => {
+        <CommentForm articleId={articleId} />
+        {comments?.data?.map((c) => {
           return <CommentComponent key={`comment-${c.id}`} {...c} />;
         })}
       </div>

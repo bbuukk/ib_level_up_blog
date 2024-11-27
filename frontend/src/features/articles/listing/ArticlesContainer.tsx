@@ -3,40 +3,31 @@ import './style.scss';
 import useGetArticles from '../server/useGetArticles';
 import ArticlesList from './ArticlesList';
 import { useState } from 'react';
-import SearchParams from '../types/SearchParams';
-import { useForm } from '@mantine/form';
-import { TextInput } from '@mantine/core';
+import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
+
+import { useSearchParams } from 'react-router-dom';
+import TagSelect from './TagSelect';
+import Pagination from './Pagination';
+import SortBySelect from './SortBySelect';
+import Search from './Search';
 
 const ArticlesContainer = () => {
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    page: 1
-  });
+  const [urlParam] = useSearchParams();
 
-  const { data, isLoading, error } = useGetArticles(searchParams);
-
-  const searchKeyWordForm = useForm<{ searchKeyword: string }>({
-    initialValues: {
-      searchKeyword: ''
-    }
-  });
-
-  const handlSearchKeywordForm = ({
-    searchKeyword
-  }: {
-    searchKeyword: string;
-  }) => {
-    setSearchParams({
-      page: 1,
-      search: searchKeyword ? searchKeyword : undefined
+  const [searchParams, setSearchParams] =
+    useState<ApiArticlesIndexRequestParams>(() => {
+      const tag: string | null = urlParam.get('tag');
+      return {
+        page: 1,
+        ...(tag && { tag: { label: tag } })
+      };
     });
-  };
 
-  const handlePageChange = (page: number) => {
-    setSearchParams({
-      ...searchParams,
-      page
-    });
-  };
+  const {
+    data: articles,
+    isLoading: isArticlesLoading,
+    error: articlesError
+  } = useGetArticles(searchParams);
 
   return (
     <main>
@@ -47,60 +38,37 @@ const ArticlesContainer = () => {
       </section>
 
       <section className="articlesPageList">
+        {/* TODO: if there is no articles, should not be show*/}
         <div className="container--articlesPageList">
           <div className="articlesListHeading">
-            <form
-              className="searchArticlesForm"
-              onSubmit={searchKeyWordForm.onSubmit(handlSearchKeywordForm)}
-            >
-              <TextInput
-                {...searchKeyWordForm.getInputProps('searchKeyword')}
-                placeholder="Search by keyword..."
-                mr="sm"
-              />
-            </form>
-            <nav>
-              <ul className="listTabs">
-                <li className="tag--tabActive">All</li>
-                <li className="tag--tab">AI</li>
-                <li className="tag--tab">Design</li>
-                <li className="tag--tab">Programming</li>
-              </ul>
-            </nav>
+            <Search params={searchParams} setParams={setSearchParams} />
+            <TagSelect params={searchParams} setParams={setSearchParams} />
           </div>
           <div className="articlesListSort">
             <p>
-              Showing <span>10</span> / <span>30</span>
+              {articles ? (
+                <>
+                  Showing <span>{articles?.to}</span> /{' '}
+                  <span>{articles?.total}</span>
+                </>
+              ) : (
+                'Loading...'
+              )}
             </p>
-            <div>
-              <label htmlFor="sort">Sort by:</label>
-              <select name="sort" id="sort">
-                <option value="">ASC</option>
-                <option value="">DES</option>
-              </select>
-            </div>
+            <SortBySelect params={searchParams} setParams={setSearchParams} />
           </div>
 
-          <ArticlesList data={data} isLoading={isLoading} error={error} />
+          <ArticlesList
+            data={articles}
+            isLoading={isArticlesLoading}
+            error={articlesError}
+          />
 
-          <nav className="pagination">
-            <ul className="pagination__list">
-              {Array.from(
-                { length: data?.last_page as number },
-                (_, index) => index + 1
-              ).map((page) => (
-                <li
-                  className={`pagination__item ${
-                    searchParams.page === page ? 'pagination__item--active' : ''
-                  }`}
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                >
-                  <span>{page}</span>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <Pagination
+            data={articles}
+            params={searchParams}
+            setParams={setSearchParams}
+          />
         </div>
       </section>
     </main>

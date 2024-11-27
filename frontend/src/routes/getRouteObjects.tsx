@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import Layout from 'components/Layout';
+import Layout from 'components/layout/Layout';
 import loaderArticles from 'features/articles/server/loaderArticles';
 import ProtectedRoute from 'features/authentication/ProtectedRoute';
 import loaderMe from 'features/authentication/server/loaderMe';
@@ -10,13 +10,14 @@ import PlaygroundPage from './PlaygroundPage';
 import ProfilePage from './ProfilePage';
 import Root from './root/Root';
 
-import ArticleLandingPage, {
-  loader as landingArticleLoader
-} from 'routes/ArticleLandingPage';
+import ArticleLandingPage from 'routes/ArticleLandingPage';
 
 import ProfileEditPage from 'routes/ProfileEditPage';
 import EditArticlePage from './EditArticlePage';
 import loaderRoot from './root/loaderRoot';
+import landingArticleLoader from 'features/articles/landing/server/loaderLandingArticle';
+import loaderProfile from 'features/profile/server/loaderProfile';
+import editCreateArticleLoader from 'features/articles/server/loaderEditCreateArticle';
 
 //TODO!: implement mobile view for all the routes
 const getRouteObjects = (queryClient_: QueryClient) => {
@@ -46,22 +47,21 @@ const getRouteObjects = (queryClient_: QueryClient) => {
             {
               path: '/articles/:id',
               element: <ArticleLandingPage />,
-              loader: landingArticleLoader
+              loader: landingArticleLoader(queryClient_)
             },
             {
               path: '/edit-article/:id?',
-              element: <EditArticlePage />
+              element: <EditArticlePage />,
+              loader: editCreateArticleLoader(queryClient_)
             },
             {
-              // About data fetching and mutations: You should use React Query (RQ) for your queries and mutations, and add React Router’s (RR) data loaders to the pages and connect them to RQ.
-              // TODO!: introduce loader for user articles
               path: '/profile',
               element: (
                 <ProtectedRoute>
                   <ProfilePage />
                 </ProtectedRoute>
-              )
-              // loader: loaderArticles(queryClient, userId)
+              ),
+              loader: loaderProfile(queryClient_)
             },
             {
               path: '/profile/edit',

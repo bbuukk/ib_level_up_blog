@@ -1,10 +1,15 @@
 import { Button, Loader } from '@mantine/core';
-import { Link, Outlet } from 'react-router-dom';
+import ScrollToTop from './ScrollToTop';
+import { useLocation, Link, Outlet } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
+
 import LoginFormModal from 'features/authentication/LoginFormModal';
 import useLogout from 'features/authentication/server/useLogout';
 import useNewAuth from 'features/authentication/server/useNewAuth';
 import IsAuthorizedRequestStatus from 'features/authentication/types/IsAuthorizedRequestStatus';
+import PremiumBanner from './PremiumBanner';
+import Footer from './Footer';
+import RegisterFormModal from 'features/authentication/RegisterFormModal';
 
 interface NavigationBarProps {
   openLoginModal: () => void;
@@ -49,6 +54,15 @@ const AuthorizationButtons = ({
 };
 
 const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === '/' && location.pathname !== '/') {
+      return false;
+    }
+    return location.pathname.startsWith(path);
+  };
+
   const logout = useLogout();
 
   const isAuthorizedStatus = useNewAuth();
@@ -64,11 +78,17 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
           <ul className="nav__list">
             {LINKS.map((link) => (
               <li key={link.to}>
-                <Link to={link.to} className="nav__link">
+                <Link
+                  to={link.to}
+                  className={`nav__link ${
+                    isActive(link.to) ? 'nav__link--active' : ''
+                  }`}
+                >
                   {link.label}
                 </Link>
               </li>
             ))}
+
             <AuthorizationButtons
               isAuthorizedStatus={isAuthorizedStatus}
               logoutCb={logout}
@@ -94,19 +114,40 @@ const NavigationBar = ({ openLoginModal }: NavigationBarProps) => {
 };
 
 const Container = ({ children }: { children: React.ReactNode }) => {
-  return <div className="container mx-auto p-4 pt-0">{children}</div>;
+  return <div className="container mx-auto px-4">{children}</div>;
 };
 
 const Layout = () => {
-  const [opened, { close, open }] = useDisclosure();
+  const [loginOpened, { close: closeLogin, open: openLogin }] = useDisclosure();
+  const [registerOpened, { close: closeRegister, open: openRegister }] =
+    useDisclosure();
 
   return (
     <div>
-      <NavigationBar openLoginModal={open} />
+      <ScrollToTop />
+      <NavigationBar openLoginModal={openLogin} />
       <Container>
-        <LoginFormModal isOpen={opened} closeModal={close} />
+        <LoginFormModal
+          isOpen={loginOpened}
+          closeModal={closeLogin}
+          switchModal={() => {
+            closeLogin();
+            openRegister();
+          }}
+        />
+        <RegisterFormModal
+          isOpen={registerOpened}
+          closeModal={closeRegister}
+          switchModal={() => {
+            closeRegister();
+            openLogin();
+          }}
+        />
         <Outlet />
       </Container>
+
+      <PremiumBanner />
+      <Footer />
     </div>
   );
 };

@@ -1,5 +1,4 @@
 .footer {
-  padding: 60px 0;
   background-color: black;
 }
 
@@ -12,3 +11,72 @@
   }
 }
 
+.footer__content {
+  display: flex;
+  gap: 25px;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+
+  padding: 60px 0;
+}
+
+.footer__heading {
+  font-size: 1.9rem;
+  font-family: $serif;
+  font-weight: bold;
+
+  color: white;
+
+  @include media($mobile) {
+    text-align: center;
+  }
+}
+
+.footerNav__list {
+  display: flex;
+  gap: 30px;
+  justify-content: space-between;
+  align-content: center;
+
+  font-family: $serif;
+  text-align: center;
+
+  font-size: 1.1rem;
+  gap: 20px;
+
+  a {
+    color: $primary;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 30px;
+    width: 30px;
+
+    border-radius: 50px;
+    background-size: 10% 10%;
+
+    transition:
+      color 0.25s ease-in-out,
+      background 0.2s ease-in-out,
+      box-shadow 0.2s ease-in-out;
+
+    &:hover {
+      background: $darkBorder;
+      box-shadow:
+        0 0 5px 3px $darkBorder,
+        0 0 10px 6px black;
+    }
+  }
+
+  @include media($tablet) {
+    gap: 30px;
+    font-size: 1.3rem;
+  }
+
+  @include media($mobile) {
+    font-size: 2rem;
+  }
+}
