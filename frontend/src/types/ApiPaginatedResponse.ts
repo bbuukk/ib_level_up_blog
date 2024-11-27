@@ -8,7 +8,7 @@ interface ApiPaginatedResponse<Tdata> {
   current_page: number;
   data: Tdata[];
   first_page_url: string;
-  from: number;
+  from: number | null;
   last_page: number;
   last_page_url: string;
   links: LinkData[];
@@ -16,7 +16,7 @@ interface ApiPaginatedResponse<Tdata> {
   path: string;
   per_page: number;
   prev_page_url: string | null;
-  to: number;
+  to: number | null;
   total: number;
 }
 
