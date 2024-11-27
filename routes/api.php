@@ -37,7 +37,10 @@ Route::post('/login', function (Request $request) {
     $password = $request->get('password');
 
     $user = User::query()->where('email', $email)->first();
-    //TODO: check if $user is present, if not abort
+
+    if (is_null($user)) {
+        abort(403, 'User not found');
+    }
 
     if (!Hash::check($password, $user->password)) {
         throw new Exception('invalid password');

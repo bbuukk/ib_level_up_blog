@@ -10,23 +10,20 @@ class IndexCommentRequest extends FormRequest
     protected function prepareforvalidation(): void
     {
         $this->merge([
+            'page' => (int) ($this->input('page', 1)),
             'perPage' => (int) ($this->input('perPage', 5)),
-
-            //TODO?: default values is inappropriate?
             'sort' => $this->input('sort', ['created_at' => 'desc']),
-            'cursor' => $this->input('cursor')
         ]);
     }
 
     public function rules(): array
     {
         return [
+            'page' => ['sometimes', 'required', 'numeric'],
             'perPage' => ['required', 'numeric'],
 
             'sort' => ['required', 'array'],
             'sort.created_at' => ['sometimes', 'required', 'string', 'in:asc,desc'],
-
-            'cursor' => ['nullable', 'string'],
         ];
     }
 }

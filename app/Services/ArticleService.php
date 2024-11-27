@@ -50,7 +50,7 @@ class ArticleService
                 ->orWhere('content', 'ilike', "%$search%");
         }
 
-        $query->with('author');
+        $query->with(['author', 'tags']);
 
         return $query;
     }
