@@ -54,7 +54,45 @@ class UserControllerTest extends TestCase
             ->assertJsonCount(2, 'data');
     }
 
-    //TODO: create test index search param
+    public function test_index_search_parameter()
+    {
+        $author = User::factory()->create();
+
+        $matchingArticle1 = Article::factory()->create([
+            'title' => 'Matching Title',
+            'content' => 'Some content',
+            'author_id' => $author->id,
+        ]);
+
+        $matchingArticle2 = Article::factory()->create([
+            'title' => 'Another Title',
+            'content' => 'Matching content',
+            'author_id' => $author->id,
+        ]);
+
+        $nonMatchingArticle = Article::factory()->create([
+            'title' => 'It does not match',
+            'content' => 'It does not match',
+            'author_id' => $author->id,
+        ]);
+
+        $response = $this->getJson('/api/articles/?search=Matching');
+
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure([
+            'data',
+            'links',
+            'total'
+        ]);
+
+        $response->assertJsonCount(2, 'data');
+
+        $response->assertJsonFragment(['id' => $matchingArticle1->id]);
+        $response->assertJsonFragment(['id' => $matchingArticle2->id]);
+
+        $response->assertJsonMissing(['id' => $nonMatchingArticle->id]);
+    }
 
     public function test_returns_user_on_show()
     {

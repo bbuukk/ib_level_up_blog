@@ -20,7 +20,8 @@ class ArticleIndexTest extends TestCase
     {
         parent::setUp();
 
-        // Create test data
+        // Use a fixed date for testing
+        $baseDate = '2023-01-15 12:00:00';
 
         $this->author = User::factory()->create();
 
@@ -28,17 +29,19 @@ class ArticleIndexTest extends TestCase
             'author_id' => $this->author->id,
             'title' => 'First Test Article',
             'content' => 'This is the first test content',
-            'created_at' => now()->subDays(2),
+            'created_at' => $baseDate,
         ]);
 
         $this->article2 = Article::factory()->create([
             'author_id' => $this->author->id,
             'title' => 'Second Test Article',
             'content' => 'This is the second test content',
-            'created_at' => now()->subDay(),
+            'created_at' => date('Y-m-d H:i:s', strtotime($baseDate . ' +2 days')),
         ]);
 
-        Article::factory()->count(15)->create();
+        Article::factory()->count(15)->create([
+            'created_at' => $baseDate,
+        ]);
     }
 
     public function test_list_all_articles(): void
@@ -83,11 +86,9 @@ class ArticleIndexTest extends TestCase
 
         $values = array_column($responseData, 'created_at');
 
-        //todo valid?
         $sortedValues = $values;
         rsort($sortedValues);
 
-        //check if array of original created_at values equals to sorted one
         $this->assertEquals($sortedValues, $values, "The array is not sorted in descending order by created_at");
     }
 
@@ -106,11 +107,12 @@ class ArticleIndexTest extends TestCase
             ->assertJsonMissing(['id' => $anotherArticle->id]);
     }
 
+
     public function test_index_filters_by_created_since_date()
     {
-        $date = now()->subDay()->toDateString();
+        $filterDate = '2023-01-16';
 
-        $response = $this->getJson("/api/articles?filter[createdSinceDate]={$date}");
+        $response = $this->getJson("/api/articles?filter[createdSinceDate]={$filterDate}");
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
