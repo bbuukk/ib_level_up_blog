@@ -1,8 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { Button, FileInput, PasswordInput, TextInput } from '@mantine/core';
-import useGetMe, {
-  buildQueryOptions
-} from 'features/authentication/server/useGetMe';
+import useGetMe from 'features/authentication/server/useGetMe';
 import './ProfileEditContainer.scss';
 import { useState } from 'react';
 import { z } from 'zod';
@@ -10,9 +7,6 @@ import { useForm, zodResolver } from '@mantine/form';
 import EditUserForm from './types/EditUserForm';
 import { useDisclosure } from '@mantine/hooks';
 import DeleteProfileModal from './DeleteProfileModal';
-import { updateUser } from 'utils/axios';
-
-//TODO!: fix the schema to use refine instead of check in hadnler
 const formSchema = z.object({
   email: z
     .string()
@@ -28,6 +22,7 @@ const formSchema = z.object({
     .or(z.literal('')),
   confirmPassword: z.string().optional().or(z.literal(''))
 });
+import useUpdateUser from './server/useUpdateUser';
 
 const ProfileEditContainer = () => {
   const [opened, { close, open }] = useDisclosure();
@@ -35,7 +30,7 @@ const ProfileEditContainer = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const queryClient = useQueryClient();
+  const { data: user, isLoading: isUserLoading, error: userError } = useGetMe();
 
   const form = useForm<EditUserForm>({
     initialValues: {
@@ -48,8 +43,7 @@ const ProfileEditContainer = () => {
     validate: zodResolver(formSchema)
   });
 
-  //TODO: use isLoading
-  const { data: userDetails, error: userDetailsErr } = useGetMe();
+  const mutation = useUpdateUser();
 
   if (userDetailsErr) {
     return 'todo';
@@ -57,30 +51,33 @@ const ProfileEditContainer = () => {
   const handleSubmit = async (values: EditUserForm) => {
     setIsSubmitting(true);
 
-    if (values.password !== values.password_confirmation) {
-      form.setFieldError(
-        'password_confirmation',
-        'Password and password confirmation should match.'
-      );
-      setIsSubmitting(false);
-      return;
-    }
-
-    //TODO: create hook with mutation instead
-    await updateUser({ id: userDetails!.id, ...values });
-
-    form.reset();
-
-    queryClient.invalidateQueries({
-      queryKey: buildQueryOptions().queryKey
-    });
+    const id = user?.id as number;
+    mutation.mutate(
+      { id, ...values },
+      {
+        onSuccess: () => {
+          form.reset();
+          notifications.show({
+            title: 'Success',
+            message: 'Hooray! Your profile was sucessfully updated!',
+            color: 'green'
+          });
+        },
+        onError: (error) => {
+          notifications.show({
+            title: 'Error',
+            message: `Something went wrong: ${error.message}`,
+            color: 'red'
+          });
+        }
+      }
+    );
 
     setIsSubmitting(false);
   };
 
   const handleFileChange = (file: File | null) => {
     if (file) {
-      // Create a temporary URL for the file
       const fileUrl = URL.createObjectURL(file);
       setPreviewUrl(fileUrl);
       form.setFieldValue('avatar', file);
