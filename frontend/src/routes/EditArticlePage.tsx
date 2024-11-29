@@ -83,7 +83,23 @@ const EditArticlePage = () => {
     navigate('/profile');
   };
 
-  const defaultAvatarUrl = 'https://picsum.photos/200/200';
+  //TODO: introduce better ui to both error and isLoading
+  if (userError) {
+    return <div>Error loading user data. Please try again later.</div>;
+  }
+
+  if (isUserLoading) {
+    return <div>Loading user data...</div>;
+  }
+
+  if (articleError) {
+    return <div>Error loading article data. Please try again later.</div>;
+  }
+
+  if (isArticleLoading) {
+    return <div>Loading article...</div>;
+  }
+
   return (
     <main className="editArticle">
       <section className="profileHero">
