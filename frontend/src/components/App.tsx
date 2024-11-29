@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 import { notifications, Notifications } from '@mantine/notifications';
 import { isAxiosError } from 'axios';
+import '@mantine/notifications/styles.css';
 
 import getRouteObjects from 'routes/getRouteObjects';
 import { customMantineTheme } from 'utils/mantineConfig';
@@ -35,7 +36,7 @@ function App() {
   return (
     <StrictMode>
       <MantineProvider theme={customMantineTheme} forceColorScheme="dark">
-        <Notifications />
+        <Notifications position="bottom-center" />
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
           <ReactQueryDevtools initialIsOpen={false} />
