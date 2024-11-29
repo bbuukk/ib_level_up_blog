@@ -37,3 +37,45 @@
   flex-direction: column;
   align-items: center;
 }
+
+.articlesList--empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 300px;
+
+  margin: 20px 0 100px;
+}
+
+.articlesList\_\_figure {
+  position: relative;
+}
+
+.articlesList\_\_image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.articlesList\_\_caption {
+  padding: 20px 0;
+
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  min-width: max-content;
+
+  color: $primary;
+  font-family: $serif;
+  font-size: 2rem;
+}
+
+.articlesList--empty .articlesList\_\_image {
+  opacity: 0.5;
+}
+
+.articlesPageList\_\_listSort {
+  @extend .articlesListSort;
+}

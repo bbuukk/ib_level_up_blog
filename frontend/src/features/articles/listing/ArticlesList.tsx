@@ -13,14 +13,27 @@ interface ArticlesListProps {
   error: unknown;
 }
 
-//TODO: beauify error message and empty dataset message
+//TODO: beauify error message
 const ArticlesList = ({ data, isLoading, error }: ArticlesListProps) => {
-  if (data?.data.length === 0) {
-    return <div>No articles found</div>;
-  }
-
   if (error) {
     return <div>Error in results</div>;
+  }
+
+  if (data?.data.length === 0) {
+    return (
+      <div className="articlesList--empty">
+        <figure className="articlesList__figure">
+          <img
+            className="articlesList__image"
+            src="/src/assets/images/no_articles_found.svg"
+            alt="No articles found"
+          ></img>
+          <figcaption className="articlesList__caption">
+            No results found
+          </figcaption>
+        </figure>
+      </div>
+    );
   }
 
   if (isLoading) {
