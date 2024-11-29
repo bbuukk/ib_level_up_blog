@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios';
+import { DatePickerInput } from '@mantine/dates';
 import useGetMe from 'features/authentication/server/useGetMe';
 import './EditArticlePage.scss';
 import { useDisclosure } from '@mantine/hooks';
@@ -11,13 +12,18 @@ import ApiArticleRequestParams from 'types/ApiArticleRequestParams';
 type ApiArticleRequestParamsWithoutId = Omit<ApiArticleRequestParams, 'id'>;
 
 import { useForm, zodResolver } from '@mantine/form';
-import { TextInput, Textarea, Button, FileInput } from '@mantine/core';
+import {
+  TextInput,
+  Textarea,
+  Button,
+  FileInput,
+  Checkbox
+} from '@mantine/core';
 
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { z } from 'zod';
 
-import { deleteArticle } from 'utils/axios';
 import { useEffect, useRef } from 'react';
 import useGetArticleByid from 'features/articles/landing/server/useGetArticleById';
 
@@ -201,46 +207,62 @@ const EditArticlePage = () => {
           onSubmit={form.onSubmit(handleSubmit)}
           className="editArticle__form"
         >
-          <TextInput
-            label="Title"
-            placeholder="Enter title"
-            {...form.getInputProps('title')}
-          />
+          <div className="editArticle__formLeftCol">
+            <TextInput
+              label="Title"
+              placeholder="Enter title"
+              {...form.getInputProps('title')}
+            />
 
-          <Textarea
-            label="Content"
-            placeholder="Enter content"
-            {...form.getInputProps('content')}
-          />
+            <Textarea
+              label="Content"
+              placeholder="Enter content"
+              autosize
+              maxRows={7}
+              {...form.getInputProps('content')}
+            />
 
-          <FileInput
-            label="Featured image"
-            placeholder="Select image"
-            accept="image/*"
-            {...form.getInputProps('cover')}
-          />
+            <FileInput
+              label="Featured image"
+              placeholder="Select image"
+              accept="image/*"
+              {...form.getInputProps('cover')}
+            />
+          </div>
 
-          {isEditingExistingArticle ? (
-            <>
-              <Button type="submit" className="button--primary">
-                Update
-              </Button>
+          <div className="editArticle__formRightCol">
+            <DatePickerInput
+              clearable
+              defaultValue={new Date()}
+              label="Pick date"
+              placeholder="Pick date"
+              disabled={true}
+            />
+          </div>
 
-              <Button
-                type="button"
-                className="button--danger"
-                onClick={openDangerActionModal}
-              >
-                Delete article
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button type="submit" className="button--primary">
-                Save
-              </Button>
-            </>
-          )}
+          <div className="editArticle__btnsGroup">
+            {isEditingExistingArticle ? (
+              <>
+                <Button type="submit" className="button--primary">
+                  Update
+                </Button>
+
+                <Button
+                  type="button"
+                  className="button--danger"
+                  onClick={openDangerActionModal}
+                >
+                  Delete article
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button type="submit" className="button--primary">
+                  Save
+                </Button>
+              </>
+            )}
+          </div>
         </form>
       </main>
     </>
