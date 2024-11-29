@@ -1,5 +1,8 @@
+import { AxiosError } from 'axios';
 import useGetMe from 'features/authentication/server/useGetMe';
 import './EditArticlePage.scss';
+
+import { MutateOptions } from '@tanstack/react-query';
 
 import ApiArticleRequestParams from 'types/ApiArticleRequestParams';
 
@@ -12,15 +15,19 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { z } from 'zod';
 
+import { deleteArticle } from 'utils/axios';
+import { useEffect, useRef } from 'react';
+import useGetArticleByid from 'features/articles/landing/server/useGetArticleById';
+
+import { notifications } from '@mantine/notifications';
+import useCreateArticle from 'features/articles/server/useCreateArticle';
+import useUpdateArticle from 'features/articles/server/useUpdateArticle';
+
 const articleSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.string().min(1, 'Content is required'),
   cover: z.instanceof(File).or(z.null()).or(z.undefined()).optional()
 });
-
-import { deleteArticle, storeArticle, updateArticle } from 'utils/axios';
-import { useEffect, useRef } from 'react';
-import useGetArticleByid from 'features/articles/landing/server/useGetArticleById';
 
 const EditArticlePage = () => {
   const navigate = useNavigate();
@@ -72,12 +79,53 @@ const EditArticlePage = () => {
     }
   }, [article, isArticleLoading, articleError, form]);
 
-  //TODO: use mutations
+  const { mutate: createMutate } = useCreateArticle();
+  const { mutate: updateMutate } = useUpdateArticle();
+
+  interface MutationError {
+    message: string;
+  }
+
+  type MutationData =
+    | ApiArticleRequestParams
+    | ApiArticleRequestParamsWithoutId;
+
+  const createMutationCallbacks = (
+    action: string
+  ): MutateOptions<void, Error, MutationData, unknown> => {
+    return {
+      onSuccess: () => {
+        form.reset();
+        notifications.show({
+          title: 'Success',
+          message: `Hooray! Article was successfully ${action}d!`,
+          color: 'green'
+        });
+        navigate('/profile');
+      },
+      onError: (error: Error) => {
+        const axiosError = error as AxiosError<MutationError>;
+        notifications.show({
+          title: 'Error',
+          message: `Something went wrong: ${
+            axiosError.response?.data?.message || axiosError.message
+          }`,
+          color: 'red'
+        });
+        navigate('/profile');
+      }
+    };
+  };
+
   const handleSubmit = async (values: ApiArticleRequestParamsWithoutId) => {
     if (isEditingExistingArticle) {
-      await updateArticle({ id: parseInt(id, 10), ...values });
+      const numericId = id as number;
+      updateMutate(
+        { id: numericId, ...values },
+        createMutationCallbacks('update')
+      );
     } else {
-      await storeArticle({ ...values });
+      createMutate(values, createMutationCallbacks('create'));
     }
 
     navigate('/profile');
