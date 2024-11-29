@@ -44,6 +44,7 @@ const ArticlesContainer = () => {
             <TagSelect params={searchParams} setParams={setSearchParams} />
           </div>
 
+          {articles?.data?.length !== 0 && (
             <div className="articlesPageList__listSort">
               <p>
                 {articles ? (
@@ -57,6 +58,7 @@ const ArticlesContainer = () => {
               </p>
               <SortBySelect params={searchParams} setParams={setSearchParams} />
             </div>
+          )}
 
           <ArticlesList
             data={articles}
@@ -64,11 +66,13 @@ const ArticlesContainer = () => {
             error={articlesError}
           />
 
-          <Pagination
-            data={articles}
-            params={searchParams}
-            setParams={setSearchParams}
-          />
+          {articles?.data?.length !== 0 && (
+            <Pagination
+              data={articles}
+              params={searchParams}
+              setParams={setSearchParams}
+            />
+          )}
         </div>
       </section>
     </main>

@@ -115,6 +115,7 @@ const EditArticlePage = () => {
 
         <FileInput
           label="Featured image"
+          placeholder="Select image"
           accept="image/*"
           {...form.getInputProps('cover')}
         />
