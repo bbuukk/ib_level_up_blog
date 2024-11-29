@@ -6,11 +6,13 @@ import { z } from 'zod';
 import { useForm, zodResolver } from '@mantine/form';
 import EditUserForm from './types/EditUserForm';
 import { useDisclosure } from '@mantine/hooks';
-import DeleteProfileModal from './DeleteProfileModal';
 import useUpdateUser from './server/useUpdateUser';
 import ApiUpdateUserRequestParams from 'types/ApiUpdateUserRequestParams';
+import useDeleteUser from './server/useDeleteUser';
 
 import { notifications } from '@mantine/notifications';
+import DangerActionModal from 'components/DangerActionModal';
+import { useNavigate } from 'react-router-dom';
 
 const formSchema = z
   .object({
@@ -43,7 +45,11 @@ const formSchema = z
   );
 
 const ProfileEditContainer = () => {
-  const [opened, { close, open }] = useDisclosure();
+  const navigate = useNavigate();
+  const [
+    dangerActionModalOpened,
+    { close: closeDangerActionModal, open: openDangerActionModal }
+  ] = useDisclosure();
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -103,6 +109,32 @@ const ProfileEditContainer = () => {
     }
   };
 
+  const { mutate: deleteMutate } = useDeleteUser();
+  const handleDeleteProfile = async () => {
+    if (!user) {
+      return;
+    }
+
+    deleteMutate(user.id, {
+      onSuccess: () => {
+        notifications.show({
+          title: 'Success',
+          message: 'Your profile was sucessfully deleted!',
+          color: 'green'
+        });
+        closeDangerActionModal();
+        navigate('/');
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: `Something went wrong: ${error.message}`,
+          color: 'red'
+        });
+      }
+    });
+  };
+
   //TODO: introduce better ui to both error and isLoading
   if (userError) {
     return <div>Error loading user data. Please try again later.</div>;
@@ -114,7 +146,11 @@ const ProfileEditContainer = () => {
 
   return (
     <>
-      <DeleteProfileModal isOpen={opened} closeModal={close} />
+      <DangerActionModal
+        isOpen={dangerActionModalOpened}
+        closeModal={closeDangerActionModal}
+        callback={handleDeleteProfile}
+      />
       <main>
         <form
           onSubmit={form.onSubmit(handleSubmit)}
@@ -180,7 +216,7 @@ const ProfileEditContainer = () => {
               <Button
                 type="button"
                 className="delete-profile-btn"
-                onClick={open}
+                onClick={openDangerActionModal}
               >
                 Delete profile
               </Button>
