@@ -38,25 +38,25 @@ const ArticlesContainer = () => {
       </section>
 
       <section className="articlesPageList">
-        {/* TODO: if there is no articles, should not be show*/}
         <div className="container--articlesPageList">
           <div className="articlesListHeading">
             <Search params={searchParams} setParams={setSearchParams} />
             <TagSelect params={searchParams} setParams={setSearchParams} />
           </div>
-          <div className="articlesListSort">
-            <p>
-              {articles ? (
-                <>
-                  Showing <span>{articles?.to}</span> /{' '}
-                  <span>{articles?.total}</span>
-                </>
-              ) : (
-                'Loading...'
-              )}
-            </p>
-            <SortBySelect params={searchParams} setParams={setSearchParams} />
-          </div>
+
+            <div className="articlesPageList__listSort">
+              <p>
+                {articles ? (
+                  <>
+                    Showing <span>{articles?.to}</span> /{' '}
+                    <span>{articles?.total}</span>
+                  </>
+                ) : (
+                  'Loading...'
+                )}
+              </p>
+              <SortBySelect params={searchParams} setParams={setSearchParams} />
+            </div>
 
           <ArticlesList
             data={articles}
