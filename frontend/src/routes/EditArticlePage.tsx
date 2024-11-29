@@ -1,5 +1,8 @@
+import { AxiosError } from 'axios';
 import useGetMe from 'features/authentication/server/useGetMe';
 import './EditArticlePage.scss';
+
+import { MutateOptions } from '@tanstack/react-query';
 
 import ApiArticleRequestParams from 'types/ApiArticleRequestParams';
 
@@ -12,29 +15,37 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { z } from 'zod';
 
+import { deleteArticle } from 'utils/axios';
+import { useEffect, useRef } from 'react';
+import useGetArticleByid from 'features/articles/landing/server/useGetArticleById';
+
+import { notifications } from '@mantine/notifications';
+import useCreateArticle from 'features/articles/server/useCreateArticle';
+import useUpdateArticle from 'features/articles/server/useUpdateArticle';
+
 const articleSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.string().min(1, 'Content is required'),
   cover: z.instanceof(File).or(z.null()).or(z.undefined()).optional()
 });
 
-import { deleteArticle, storeArticle, updateArticle } from 'utils/axios';
-import { useEffect, useRef } from 'react';
-import useGetArticleByid from 'features/articles/landing/server/useGetArticleById';
-
 const EditArticlePage = () => {
-  const { id } = useParams();
-
   const navigate = useNavigate();
 
-  const {
-    data: article,
-    isLoading,
-    error
-  } = useGetArticleByid(id ? parseInt(id, 10) : undefined);
+  const { id: paramId } = useParams();
 
-  //TODO!: use error and loading states
-  const { data: userDetails } = useGetMe();
+  // Handle invalid id parameters:
+  // If 'id' is not a valid number (e.g., a non-numeric string),
+  // the page will default to 'create article' mode instead of 'edit' mode.
+  let id = undefined;
+  if (paramId) {
+    const parsed = parseInt(paramId, 10);
+    id = isNaN(parsed) ? undefined : parsed;
+  }
+
+  const isEditingExistingArticle = id != undefined;
+
+  const { data: article, isLoading, error } = useGetArticleByid(id);
 
   const form = useForm<ApiArticleRequestParamsWithoutId>({
     initialValues: {
@@ -44,6 +55,8 @@ const EditArticlePage = () => {
     },
     validate: zodResolver(articleSchema)
   });
+
+  const { data: user, isLoading: isUserLoading, error: userError } = useGetMe();
 
   const isInitialized = useRef(false);
   useEffect(() => {
@@ -57,19 +70,67 @@ const EditArticlePage = () => {
     }
   }, [article, isLoading, error, form]);
 
-  //TODO: use mutations
+  const { mutate: createMutate } = useCreateArticle();
+  const { mutate: updateMutate } = useUpdateArticle();
+
+  interface MutationError {
+    message: string;
+  }
+
+  type MutationData =
+    | ApiArticleRequestParams
+    | ApiArticleRequestParamsWithoutId;
+
+  const createMutationCallbacks = (
+    action: string
+  ): MutateOptions<void, Error, MutationData, unknown> => {
+    return {
+      onSuccess: () => {
+        form.reset();
+        notifications.show({
+          title: 'Success',
+          message: `Hooray! Article was successfully ${action}d!`,
+          color: 'green'
+        });
+        navigate('/profile');
+      },
+      onError: (error: Error) => {
+        const axiosError = error as AxiosError<MutationError>;
+        notifications.show({
+          title: 'Error',
+          message: `Something went wrong: ${
+            axiosError.response?.data?.message || axiosError.message
+          }`,
+          color: 'red'
+        });
+        navigate('/profile');
+      }
+    };
+  };
+
   const handleSubmit = async (values: ApiArticleRequestParamsWithoutId) => {
-    if (id) {
-      //todo: not safe? id can be anything(any string ) rework
-      await updateArticle({ id: parseInt(id, 10), ...values });
+    if (isEditingExistingArticle) {
+      const numericId = id as number;
+      updateMutate(
+        { id: numericId, ...values },
+        createMutationCallbacks('update')
+      );
     } else {
-      await storeArticle({ ...values });
+      createMutate(values, createMutationCallbacks('create'));
     }
 
     navigate('/profile');
   };
 
-  const defaultAvatarUrl = 'https://picsum.photos/200/200';
+  //TODO: introduce better ui to both error and isLoading
+  if (userError) {
+    return <div>Error loading user data. Please try again later.</div>;
+  }
+
+  if (isUserLoading) {
+    return <div>Loading user data...</div>;
+  }
+
   return (
     <main className="editArticle">
       <section className="profileHero">
@@ -80,17 +141,17 @@ const EditArticlePage = () => {
               <li>
                 <Link to="/profile">{`<- Back to profile`}</Link>
               </li>
-              {/* check if it new or editing
-              <li>
-                <a href="/articles/">{`View article-> `}</a>
-              </li>
-              */}
+              {isEditingExistingArticle && (
+                <li>
+                  <Link to={`/articles/${id}`}>{`View article-> `}</Link>
+                </li>
+              )}
             </ul>
           </div>
           <div className="profileHeroImage">
             <img
               className="profileHeroImage__image"
-              src={userDetails?.avatar_url ?? defaultAvatarUrl}
+              src={user?.avatar_url ?? '/src/assets/logo.svg'}
               alt="user avatar"
             />
           </div>
@@ -120,7 +181,7 @@ const EditArticlePage = () => {
           {...form.getInputProps('cover')}
         />
 
-        {id ? (
+        {isEditingExistingArticle ? (
           <>
             <Button type="submit" className="button--primary">
               Update
@@ -130,7 +191,8 @@ const EditArticlePage = () => {
               type="button"
               className="button--danger"
               onClick={() => {
-                deleteArticle(parseInt(id, 10));
+                //TODO: introduce warning modal!
+                deleteArticle(id as number);
                 navigate('/profile');
               }}
             >

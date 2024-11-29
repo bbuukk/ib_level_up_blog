@@ -1,11 +1,11 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { storeArticle } from 'utils/axios';
+import { updateArticle } from 'utils/axios';
 
-const useCreateArticle = () => {
+const useUpdateArticle = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: storeArticle,
+    mutationFn: updateArticle,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
     }
@@ -14,4 +14,4 @@ const useCreateArticle = () => {
   return mutation;
 };
 
-export default useCreateArticle;
+export default useUpdateArticle;
