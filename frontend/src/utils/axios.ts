@@ -3,7 +3,6 @@ import axios from 'axios';
 import CreateCommentFormData from 'types/CreateCommentFormData';
 import ApiPaginatedRequestParams from 'types/ApiPaginatedRequestParams';
 import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
-import ApiUserArticlesRequestParams from 'features/profile/types/ApiUserArticlesRequestParams';
 import ApiUpdateUserRequestParams from 'types/ApiUpdateUserRequestParams';
 import ApiArticleRequestParams from 'types/ApiArticleRequestParams';
 
@@ -12,7 +11,6 @@ import LoginForm from 'features/authentication/types/LoginForm';
 import ApiArticle from 'types/ApiArticle';
 import ApiPaginatedResponse from 'types/ApiPaginatedResponse';
 import ApiUser from 'types/ApiUser';
-import CreateArticleFormData from 'types/CreateArticvleFormData';
 import { PAGE_SIZE } from './constants';
 import { transformObjectToFormData } from './transformObjectToFormData';
 import ApiTag from 'types/ApiTag';
@@ -95,7 +93,7 @@ export const getArticles = async (
     }
   });
 
-  return response.data
+  return response.data;
 };
 
 export const updateUser = async (params: ApiUpdateUserRequestParams) => {
@@ -163,7 +161,7 @@ export const updateArticle = async (params: ApiArticleRequestParams) => {
   return response.data;
 };
 
-export const deleteArticle = async (articleId: number) => {
+export const deleteArticle = async ({ articleId }: { articleId: number }) => {
   const response = await axiosInstance({
     method: 'DELETE',
     url: `/api/articles/${articleId}`

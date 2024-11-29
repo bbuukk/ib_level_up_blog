@@ -1,6 +1,8 @@
 import { AxiosError } from 'axios';
 import useGetMe from 'features/authentication/server/useGetMe';
 import './EditArticlePage.scss';
+import { useDisclosure } from '@mantine/hooks';
+import DangerActionModal from 'components/DangerActionModal';
 
 import { MutateOptions } from '@tanstack/react-query';
 
@@ -22,6 +24,7 @@ import useGetArticleByid from 'features/articles/landing/server/useGetArticleByI
 import { notifications } from '@mantine/notifications';
 import useCreateArticle from 'features/articles/server/useCreateArticle';
 import useUpdateArticle from 'features/articles/server/useUpdateArticle';
+import useDeleteArticle from 'features/articles/server/useDeleteArticle';
 
 const articleSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -31,6 +34,11 @@ const articleSchema = z.object({
 
 const EditArticlePage = () => {
   const navigate = useNavigate();
+
+  const [
+    dangerActionModalOpened,
+    { close: closeDangerActionModal, open: openDangerActionModal }
+  ] = useDisclosure();
 
   const { id: paramId } = useParams();
 
@@ -112,7 +120,6 @@ const EditArticlePage = () => {
           }`,
           color: 'red'
         });
-        navigate('/profile');
       }
     };
   };
@@ -128,6 +135,15 @@ const EditArticlePage = () => {
       createMutate(values, createMutationCallbacks('create'));
     }
 
+    navigate('/profile');
+  };
+
+  const { mutate: deleteMutate } = useDeleteArticle();
+  const handleDeleteArticle = () => {
+    deleteMutate(
+      { articleId: id as number },
+      createMutationCallbacks('delete')
+    );
     navigate('/profile');
   };
 
@@ -149,82 +165,85 @@ const EditArticlePage = () => {
   }
 
   return (
-    <main className="editArticle">
-      <section className="profileHero">
-        <div className="container--profileHero">
-          <div className="profileHero__left">
-            <h1>Create / Edit article</h1>
-            <ul>
-              <li>
-                <Link to="/profile">{`<- Back to profile`}</Link>
-              </li>
-              {isEditingExistingArticle && (
+    <>
+      <DangerActionModal
+        isOpen={dangerActionModalOpened}
+        closeModal={closeDangerActionModal}
+        callback={handleDeleteArticle}
+      />
+      <main className="editArticle">
+        <section className="profileHero">
+          <div className="container--profileHero">
+            <div className="profileHero__left">
+              <h1>Create / Edit article</h1>
+              <ul>
                 <li>
-                  <Link to={`/articles/${id}`}>{`View article-> `}</Link>
+                  <Link to="/profile">{`<- Back to profile`}</Link>
                 </li>
-              )}
-            </ul>
+                {isEditingExistingArticle && (
+                  <li>
+                    <Link to={`/articles/${id}`}>{`View article-> `}</Link>
+                  </li>
+                )}
+              </ul>
+            </div>
+            <div className="profileHeroImage">
+              <img
+                className="profileHeroImage__image"
+                src={user?.avatar_url ?? '/src/assets/logo.svg'}
+                alt="user avatar"
+              />
+            </div>
           </div>
-          <div className="profileHeroImage">
-            <img
-              className="profileHeroImage__image"
-              src={user?.avatar_url ?? '/src/assets/logo.svg'}
-              alt="user avatar"
-            />
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <form
-        onSubmit={form.onSubmit(handleSubmit)}
-        className="editArticle__form"
-      >
-        <TextInput
-          label="Title"
-          placeholder="Enter title"
-          {...form.getInputProps('title')}
-        />
+        <form
+          onSubmit={form.onSubmit(handleSubmit)}
+          className="editArticle__form"
+        >
+          <TextInput
+            label="Title"
+            placeholder="Enter title"
+            {...form.getInputProps('title')}
+          />
 
-        <Textarea
-          label="Content"
-          placeholder="Enter content"
-          {...form.getInputProps('content')}
-        />
+          <Textarea
+            label="Content"
+            placeholder="Enter content"
+            {...form.getInputProps('content')}
+          />
 
-        <FileInput
-          label="Featured image"
-          placeholder="Select image"
-          accept="image/*"
-          {...form.getInputProps('cover')}
-        />
+          <FileInput
+            label="Featured image"
+            placeholder="Select image"
+            accept="image/*"
+            {...form.getInputProps('cover')}
+          />
 
-        {isEditingExistingArticle ? (
-          <>
-            <Button type="submit" className="button--primary">
-              Update
-            </Button>
+          {isEditingExistingArticle ? (
+            <>
+              <Button type="submit" className="button--primary">
+                Update
+              </Button>
 
-            <Button
-              type="button"
-              className="button--danger"
-              onClick={() => {
-                //TODO: introduce warning modal!
-                deleteArticle(id as number);
-                navigate('/profile');
-              }}
-            >
-              Delete article
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button type="submit" className="button--primary">
-              Save
-            </Button>
-          </>
-        )}
-      </form>
-    </main>
+              <Button
+                type="button"
+                className="button--danger"
+                onClick={openDangerActionModal}
+              >
+                Delete article
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button type="submit" className="button--primary">
+                Save
+              </Button>
+            </>
+          )}
+        </form>
+      </main>
+    </>
   );
 };
 
