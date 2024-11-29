@@ -1,8 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { Button, FileInput, PasswordInput, TextInput } from '@mantine/core';
-import useGetMe, {
-  buildQueryOptions
-} from 'features/authentication/server/useGetMe';
+import useGetMe from 'features/authentication/server/useGetMe';
 import './ProfileEditContainer.scss';
 import { useState } from 'react';
 import { z } from 'zod';
@@ -10,8 +7,10 @@ import { useForm, zodResolver } from '@mantine/form';
 import EditUserForm from './types/EditUserForm';
 import { useDisclosure } from '@mantine/hooks';
 import DeleteProfileModal from './DeleteProfileModal';
-import { updateUser } from 'utils/axios';
+import useUpdateUser from './server/useUpdateUser';
 import ApiUpdateUserRequestParams from 'types/ApiUpdateUserRequestParams';
+
+import { notifications } from '@mantine/notifications';
 
 const formSchema = z
   .object({
@@ -50,7 +49,7 @@ const ProfileEditContainer = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const queryClient = useQueryClient();
+  const { data: user, isLoading: isUserLoading, error: userError } = useGetMe();
 
   const form = useForm<Omit<ApiUpdateUserRequestParams, 'id'>>({
     initialValues: {
@@ -63,21 +62,32 @@ const ProfileEditContainer = () => {
     validate: zodResolver(formSchema)
   });
 
-  //TODO: use isLoading
-  const { data: userDetails, error: userDetailsErr } = useGetMe();
+  const mutation = useUpdateUser();
 
   const handleSubmit = async (values: EditUserForm) => {
     setIsSubmitting(true);
 
-
-    //TODO: create hook with mutation instead
-    await updateUser({ id: userDetails!.id, ...values });
-
-    form.reset();
-
-    queryClient.invalidateQueries({
-      queryKey: buildQueryOptions().queryKey
-    });
+    const id = user?.id as number;
+    mutation.mutate(
+      { id, ...values },
+      {
+        onSuccess: () => {
+          form.reset();
+          notifications.show({
+            title: 'Success',
+            message: 'Hooray! Your profile was sucessfully updated!',
+            color: 'green'
+          });
+        },
+        onError: (error) => {
+          notifications.show({
+            title: 'Error',
+            message: `Something went wrong: ${error.message}`,
+            color: 'red'
+          });
+        }
+      }
+    );
 
     setIsSubmitting(false);
   };
