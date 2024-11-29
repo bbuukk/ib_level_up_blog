@@ -38,7 +38,11 @@ const EditArticlePage = () => {
 
   const isEditingExistingArticle = id != undefined;
 
-  const { data: article, isLoading, error } = useGetArticleByid(id);
+  const {
+    data: article,
+    isLoading: isArticleLoading,
+    error: articleError
+  } = useGetArticleByid(id);
 
   const form = useForm<ApiArticleRequestParamsWithoutId>({
     initialValues: {
@@ -53,7 +57,12 @@ const EditArticlePage = () => {
 
   const isInitialized = useRef(false);
   useEffect(() => {
-    if (article && !isLoading && !error && !isInitialized.current) {
+    if (
+      article &&
+      !isArticleLoading &&
+      !articleError &&
+      !isInitialized.current
+    ) {
       form.setValues({
         title: article.title || '',
         content: article.content || '',
@@ -61,7 +70,7 @@ const EditArticlePage = () => {
       });
       isInitialized.current = true;
     }
-  }, [article, isLoading, error, form]);
+  }, [article, isArticleLoading, articleError, form]);
 
   //TODO: use mutations
   const handleSubmit = async (values: ApiArticleRequestParamsWithoutId) => {
