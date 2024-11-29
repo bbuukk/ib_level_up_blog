@@ -2,10 +2,11 @@ import useGetMe from 'features/authentication/server/useGetMe';
 import './ProfileContainer.scss';
 import ArticlesList from 'features/articles/listing/ArticlesList';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ApiArticlesIndexRequestParams from 'types/ApiArticlesIndexRequestParams';
 import useGetArticles from 'features/articles/server/useGetArticles';
 import SortBySelect from 'features/articles/listing/SortBySelect';
+import Pagination from 'features/articles/listing/Pagination';
 
 export const createUserArticlesParams = (
   id: number
@@ -22,36 +23,36 @@ export const createUserArticlesParams = (
 };
 
 const ProfileContainer = () => {
-  const navigate = useNavigate();
-
-  //TODO: use isLoading
-  const { data: userDetails, error: userDetailsErr } = useGetMe();
+  const {
+    data: userDetails,
+    isLoading: isUserLoading,
+    error: userDetailsError
+  } = useGetMe();
 
   const [params, setParams] = useState<ApiArticlesIndexRequestParams>(
     createUserArticlesParams(userDetails?.id as number)
   );
 
-  const handlePageChange = (page: number) => {
-    setParams({
-      ...params,
-      page
-    });
-  };
+  const {
+    data: articles,
+    isLoading: isArticlesLoading,
+    error: articlesError
+  } = useGetArticles(params);
 
-  //TODO: use isLoading
-  const { data, isLoading, error } = useGetArticles(params);
-
-  if (userDetailsErr) {
-    return 'todo';
+  if (isUserLoading || isArticlesLoading) {
+    return <div>Loading...</div>;
   }
 
-  if (error) {
-    return 'todo';
+  if (userDetailsError) {
+    return <div>Error loading user details: {userDetailsError.message}</div>;
   }
 
-  const defaultAvatarUrl = 'https://picsum.photos/200/200';
+  if (articlesError) {
+    return <div>Error loading articles: {articlesError.message}</div>;
+  }
+
   return (
-    <main>
+    <main className="profile">
       <section className="profileHero">
         <div className="container--profileHero">
           <div className="profileHero__left">
@@ -70,48 +71,35 @@ const ProfileContainer = () => {
           <div className="profileHeroImage">
             <img
               className="profileHeroImage__image"
-              src={userDetails?.avatar_url ?? defaultAvatarUrl}
+              src={userDetails?.avatar_url ?? 'src/assets/logo.svg'}
               alt="user avatar"
             />
           </div>
         </div>
       </section>
-      <button
-        className="button--primary mt-10"
-        onClick={() => navigate('/edit-article')}
-      >
+
+      <Link className="profile__createNewPostBtn" to="/edit-article">
         Create new post
-      </button>
+      </Link>
 
-      {/* TODO: if there is no articles, should not be shown*/}
-      <div className="articlesListSort">
-        <p>
-          Showing <span>{data?.to}</span> / <span>{data?.total}</span>
-        </p>
-        <SortBySelect params={params} setParams={setParams} />
-      </div>
+      {articles?.data?.length !== 0 && (
+        <div className="profile__articlesListSort">
+          <p>
+            Showing <span>{articles?.to}</span> / <span>{articles?.total}</span>
+          </p>
+          <SortBySelect params={params} setParams={setParams} />
+        </div>
+      )}
 
-      <ArticlesList data={data} isLoading={isLoading} error={error} />
+      <ArticlesList
+        data={articles}
+        isLoading={isArticlesLoading}
+        error={articlesError}
+      />
 
-      {/* TODO: if there is only one page of articles, should not be shown*/}
-      <nav className="pagination">
-        <ul className="pagination__list">
-          {Array.from(
-            { length: data?.last_page as number },
-            (_, index) => index + 1
-          ).map((page) => (
-            <li
-              className={`pagination__item ${
-                params.page === page ? 'pagination__item--active' : ''
-              }`}
-              key={page}
-              onClick={() => handlePageChange(page)}
-            >
-              <span>{page}</span>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {articles?.data?.length !== 0 && (
+        <Pagination data={articles} params={params} setParams={setParams} />
+      )}
     </main>
   );
 };
