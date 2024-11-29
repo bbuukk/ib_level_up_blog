@@ -23,18 +23,22 @@ import { useEffect, useRef } from 'react';
 import useGetArticleByid from 'features/articles/landing/server/useGetArticleById';
 
 const EditArticlePage = () => {
-  const { id } = useParams();
-
   const navigate = useNavigate();
 
-  const {
-    data: article,
-    isLoading,
-    error
-  } = useGetArticleByid(id ? parseInt(id, 10) : undefined);
+  const { id: paramId } = useParams();
 
-  //TODO!: use error and loading states
-  const { data: userDetails } = useGetMe();
+  // Handle invalid id parameters:
+  // If 'id' is not a valid number (e.g., a non-numeric string),
+  // the page will default to 'create article' mode instead of 'edit' mode.
+  let id = undefined;
+  if (paramId) {
+    const parsed = parseInt(paramId, 10);
+    id = isNaN(parsed) ? undefined : parsed;
+  }
+
+  const isEditingExistingArticle = id != undefined;
+
+  const { data: article, isLoading, error } = useGetArticleByid(id);
 
   const form = useForm<ApiArticleRequestParamsWithoutId>({
     initialValues: {
@@ -44,6 +48,8 @@ const EditArticlePage = () => {
     },
     validate: zodResolver(articleSchema)
   });
+
+  const { data: user, isLoading: isUserLoading, error: userError } = useGetMe();
 
   const isInitialized = useRef(false);
   useEffect(() => {
@@ -59,8 +65,7 @@ const EditArticlePage = () => {
 
   //TODO: use mutations
   const handleSubmit = async (values: ApiArticleRequestParamsWithoutId) => {
-    if (id) {
-      //todo: not safe? id can be anything(any string ) rework
+    if (isEditingExistingArticle) {
       await updateArticle({ id: parseInt(id, 10), ...values });
     } else {
       await storeArticle({ ...values });
@@ -80,17 +85,17 @@ const EditArticlePage = () => {
               <li>
                 <Link to="/profile">{`<- Back to profile`}</Link>
               </li>
-              {/* check if it new or editing
-              <li>
-                <a href="/articles/">{`View article-> `}</a>
-              </li>
-              */}
+              {isEditingExistingArticle && (
+                <li>
+                  <Link to={`/articles/${id}`}>{`View article-> `}</Link>
+                </li>
+              )}
             </ul>
           </div>
           <div className="profileHeroImage">
             <img
               className="profileHeroImage__image"
-              src={userDetails?.avatar_url ?? defaultAvatarUrl}
+              src={user?.avatar_url ?? '/src/assets/logo.svg'}
               alt="user avatar"
             />
           </div>
@@ -120,7 +125,7 @@ const EditArticlePage = () => {
           {...form.getInputProps('cover')}
         />
 
-        {id ? (
+        {isEditingExistingArticle ? (
           <>
             <Button type="submit" className="button--primary">
               Update
@@ -130,7 +135,8 @@ const EditArticlePage = () => {
               type="button"
               className="button--danger"
               onClick={() => {
-                deleteArticle(parseInt(id, 10));
+                //TODO: introduce warning modal!
+                deleteArticle(id as number);
                 navigate('/profile');
               }}
             >
