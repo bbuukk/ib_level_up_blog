@@ -103,7 +103,14 @@ const ProfileEditContainer = () => {
     }
   };
 
-  const defaultAvatarUrl = 'https://picsum.photos/200/200';
+  //TODO: introduce better ui to both error and isLoading
+  if (userError) {
+    return <div>Error loading user data. Please try again later.</div>;
+  }
+
+  if (isUserLoading) {
+    return <div>Loading user data...</div>;
+  }
 
   return (
     <>
@@ -136,9 +143,7 @@ const ProfileEditContainer = () => {
                 />
                 <img
                   className="profileHeroImage__image"
-                  src={
-                    previewUrl || userDetails?.avatar_url || defaultAvatarUrl
-                  }
+                  src={previewUrl || user?.avatar_url || '/src/assets/logo.svg'}
                   alt="user avatar"
                 />
                 <span className="profileHeroImage__changeImage">🖊</span>
