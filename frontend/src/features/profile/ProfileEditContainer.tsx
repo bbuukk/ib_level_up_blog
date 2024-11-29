@@ -11,33 +11,48 @@ import EditUserForm from './types/EditUserForm';
 import { useDisclosure } from '@mantine/hooks';
 import DeleteProfileModal from './DeleteProfileModal';
 import { updateUser } from 'utils/axios';
+import ApiUpdateUserRequestParams from 'types/ApiUpdateUserRequestParams';
 
-//TODO!: fix the schema to use refine instead of check in hadnler
-const formSchema = z.object({
-  email: z
-    .string()
-    .email('Invalid email')
-    .min(1, 'Email is required')
-    .optional()
-    .or(z.literal('')),
-  name: z.string().min(1, 'Name is required').optional().or(z.literal('')),
-  password: z
-    .string()
-    .min(6, 'Password must be at least 6 characters')
-    .optional()
-    .or(z.literal('')),
-  confirmPassword: z.string().optional().or(z.literal(''))
-});
+const formSchema = z
+  .object({
+    email: z
+      .string()
+      .email('Invalid email')
+      .min(1, 'Email is required')
+      .optional()
+      .or(z.literal('')),
+    name: z.string().min(1, 'Name is required').optional().or(z.literal('')),
+    avatar: z.instanceof(File).or(z.null()).or(z.undefined()).optional(),
+    password: z
+      .string()
+      .min(6, 'Password must be at least 6 characters')
+      .optional()
+      .or(z.literal('')),
+    password_confirmation: z.string().optional().or(z.literal(''))
+  })
+  .refine(
+    (data) => {
+      if (data.password || data.password_confirmation) {
+        return data.password === data.password_confirmation;
+      }
+      return true;
+    },
+    {
+      message: 'Passwords do not match',
+      path: ['password_confirmation']
+    }
+  );
 
 const ProfileEditContainer = () => {
   const [opened, { close, open }] = useDisclosure();
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryClient = useQueryClient();
 
-  const form = useForm<EditUserForm>({
+  const form = useForm<Omit<ApiUpdateUserRequestParams, 'id'>>({
     initialValues: {
       email: '',
       name: '',
@@ -51,20 +66,9 @@ const ProfileEditContainer = () => {
   //TODO: use isLoading
   const { data: userDetails, error: userDetailsErr } = useGetMe();
 
-  if (userDetailsErr) {
-    return 'todo';
-  }
   const handleSubmit = async (values: EditUserForm) => {
     setIsSubmitting(true);
 
-    if (values.password !== values.password_confirmation) {
-      form.setFieldError(
-        'password_confirmation',
-        'Password and password confirmation should match.'
-      );
-      setIsSubmitting(false);
-      return;
-    }
 
     //TODO: create hook with mutation instead
     await updateUser({ id: userDetails!.id, ...values });
@@ -80,7 +84,6 @@ const ProfileEditContainer = () => {
 
   const handleFileChange = (file: File | null) => {
     if (file) {
-      // Create a temporary URL for the file
       const fileUrl = URL.createObjectURL(file);
       setPreviewUrl(fileUrl);
       form.setFieldValue('avatar', file);
@@ -118,9 +121,8 @@ const ProfileEditContainer = () => {
                   className="ProfileHeroImage__fileInput"
                   label="Change avatar"
                   accept="image/*"
+                  {...form.getInputProps('avatar')}
                   onChange={handleFileChange}
-                  value={form.values.avatar}
-                  error={form.errors.avatar}
                 />
                 <img
                   className="profileHeroImage__image"
