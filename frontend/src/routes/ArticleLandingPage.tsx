@@ -7,8 +7,9 @@ import ArticleMeta from 'features/articles/landing/ArticleMeta';
 import { Loader } from '@mantine/core';
 import useGetArticleByid from 'features/articles/landing/server/useGetArticleById';
 
+//TODO: display actual tags of article
 //TODO: use Default image for article if there is none.
-//TODO:Make the comment submission a RQ mutation, and invalidate the corresponding query cache, so it’ll load the latest comments.
+//TODO: make the comment submission a RQ mutation, and invalidate the corresponding query cache, so it’ll load the latest comments.
 //TODO: load other articles of this author
 const ArticleLandingPage = () => {
   const { id } = useParams();

@@ -127,3 +127,17 @@
 .container--profileContent {
   @extend .container;
 }
+
+.profile__createNewPostBtn {
+  @extend .button--primary;
+
+  display: block;
+
+  width: max-content;
+
+  margin-top: 40px;
+}
+
+.profile__articlesListSort {
+  @extend .articlesListSort;
+}
