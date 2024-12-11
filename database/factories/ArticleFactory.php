@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,6 +20,7 @@ class ArticleFactory extends Factory
      */
     public function definition(): array
     {
+
         $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
 
         $attributes = [
@@ -31,7 +31,10 @@ class ArticleFactory extends Factory
             'updated_at' => $createdAt
         ];
 
-        if (Config::get('app.env', false) === 'local') {
+        if (
+            env('APP_ENV') !== 'production' &&
+            env('APP_ENV') !== 'testing'
+        ) {
             $attributes['cover_url'] = $this->generateFakeImage();
         }
 
