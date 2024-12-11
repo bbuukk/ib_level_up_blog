@@ -17,14 +17,26 @@ class ArticleSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            ['email' => 'user1@example.com', 'password' => 'password1'],
-            ['email' => 'user2@example.com', 'password' => 'password2'],
-            ['email' => 'user3@example.com', 'password' => 'password3'],
+            [
+                'name' => 'User 1',
+                'email' => 'user1@example.com',
+                'password' => bcrypt('password1'),
+            ],
+            [
+                'name' => 'User 2',
+                'email' => 'user2@example.com',
+                'password' => bcrypt('password2'),
+            ],
+            [
+                'name' => 'User 3',
+                'email' => 'user3@example.com',
+                'password' => bcrypt('password3'),
+            ],
         ];
 
         User::factory()
             ->count(3)
-            ->state(new Sequence($users))
+            ->state(new Sequence(...$users))
             ->has(
                 Article::factory()
                     ->count(3)
