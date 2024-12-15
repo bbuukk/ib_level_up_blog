@@ -3,6 +3,8 @@
 namespace Tests\Unit;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,7 +24,6 @@ class FirstHomeworkTest extends TestCase
         int $length = 0,
         string $replacement = '...'
     ) {
-
         $encoding = 'UTF-8';
 
         $index = mb_strpos($haystack, $needle, 0, $encoding);

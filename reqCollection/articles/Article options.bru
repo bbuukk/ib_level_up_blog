@@ -1,17 +1,17 @@
 meta {
-  name: Article Recover
+  name: Article options
   type: http
-  seq: 12
+  seq: 9
 }
 
-post {
+options {
   url: http://localhost:8000/api/articles
   body: multipartForm
   auth: none
 }
 
 headers {
-  Authorization: Bearer 2|6kP0id1ZRGRIW63OBxAryczXgBplPFtXFNHWusyU415b7c26
+  Authorization: Bearer 16|hBfrkrKzic13WcZVqJQFfBxXcg74YcbCZpkK0CXVb1ed9a93
 }
 
 body:json {
@@ -25,4 +25,5 @@ body:multipart-form {
   cover: @file(/home/bchk/Downloads/sudilkovsky-1856064716856086705[twitter].jpg)
   title: 10
   content: some contnet
+  is_premium: true
 }
